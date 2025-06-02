@@ -3,16 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OW2 Generator - Mercy</title>
+  <title>OW2 Skill Planner - Mercy</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #111;
-      color: #eee;
+      background: #121212;
+      color: #e0e0e0;
+      margin: 0;
       padding: 20px;
     }
     h1, h2 {
-      color: #4fc3f7;
+      color: #00BFFF;
+    }
+    input, select, button {
+      margin: 5px 0;
+      padding: 5px;
     }
     table {
       width: 100%;
@@ -25,98 +30,77 @@
       text-align: left;
     }
     th {
-      background-color: #222;
+      background-color: #1f1f1f;
     }
     tr:nth-child(even) {
-      background-color: #1a1a1a;
+      background-color: #1e1e1e;
     }
   </style>
 </head>
 <body>
-  <h1>Overwatch 2 - Recommandations pour Mercy (Mode Stadium)</h1>
+  <h1>OW2 Skill Planner - Mercy</h1>
+  <p>Renseigne les points obtenus manche par manche pour obtenir des recommandations optimales :</p>
+  <div id="inputs"></div>
+  <button onclick="generatePlan()">Générer les recommandations</button>
+  <div id="plan"></div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Manche</th>
-        <th>Budget pts</th>
-        <th>Compétences payantes recommandées</th>
-        <th>Catégorie</th>
-        <th>Coût pts</th>
-        <th>Pouvoir gratuit à choisir</th>
-        <th>Effet clé et intérêt stratégique</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>3500 pts</td>
-        <td>
-          - Boost de soin (Heal Boost)<br>
-          - Soin ciblé (Focused Heal)<br>
-          - Packs de soin améliorés (Med Pack)
-        </td>
-        <td>Survie / Capacité / Survie</td>
-        <td>1000 / 1000 / 1500</td>
-        <td><strong>Triage Unit</strong></td>
-        <td>+30% soins Guardian Angel sur alliés < 50% vie (super clutch)</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>6000 - 9000 pts</td>
-        <td>- Aura revitalisante (Revitalizing Aura)</td>
-        <td>Capacité</td>
-        <td>10000 (à rembourser plus tard)</td>
-        <td>-</td>
-        <td>Améliore soins de zone, investissement tardif</td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td>9000 - 11000 pts</td>
-        <td>- Soin boosté (Boosted Heal)</td>
-        <td>Capacité</td>
-        <td>11000 (à rembourser plus tard)</td>
-        <td><strong>Distortion</strong></td>
-        <td>Alliés boostés gagnent 20% lifesteal</td>
-      </tr>
-      <tr>
-        <td>4</td>
-        <td>12000 - 13000 pts</td>
-        <td>- Réflexes rapides (Quick Reflexes)</td>
-        <td>Capacité</td>
-        <td>12000 (à rembourser plus tard)</td>
-        <td>-</td>
-        <td>Améliore réactivité de soin</td>
-      </tr>
-      <tr>
-        <td>5</td>
-        <td>13000 - 15000 pts</td>
-        <td>- Amplificateur biotech (Biotech Maximizer)</td>
-        <td>Arme</td>
-        <td>13000</td>
-        <td><strong>Equivalent Exchange</strong></td>
-        <td>3 résurrections avec 33% de cooldown réduit par manche</td>
-      </tr>
-      <tr>
-        <td>6</td>
-        <td>13000 - 15000 pts</td>
-        <td>- Packs de soin améliorés (Amélioration max)</td>
-        <td>Survie</td>
-        <td>15000</td>
-        <td>-</td>
-        <td>Maximiser soin sur packs</td>
-      </tr>
-      <tr>
-        <td>7</td>
-        <td>13000 - 15000 pts</td>
-        <td>- Optionnel selon besoins (ex: puissance arme)</td>
-        <td>Arme</td>
-        <td>Variable</td>
-        <td><strong>Crepuscular Circle</strong></td>
-        <td>Soins et boost auto pendant Valkyrie pour alliés proches</td>
-      </tr>
-    </tbody>
-  </table>
+  <script>
+    const powerChoices = {
+      1: "Triage Unit",
+      3: "Distortion",
+      5: "Equivalent Exchange",
+      7: "Crepuscular Circle"
+    };
 
+    const skills = [
+      { name: "Boost de soin", cat: "Survie", cost: 1000, round: 1 },
+      { name: "Soin ciblé", cat: "Capacité", cost: 1000, round: 1 },
+      { name: "Packs de soin améliorés", cat: "Survie", cost: 1500, round: 1 },
+      { name: "Aura revitalisante", cat: "Capacité", cost: 10000, round: 2 },
+      { name: "Soin boosté", cat: "Capacité", cost: 11000, round: 3 },
+      { name: "Réflexes rapides", cat: "Capacité", cost: 12000, round: 4 },
+      { name: "Amplificateur biotech", cat: "Arme", cost: 13000, round: 5 },
+      { name: "Packs de soin améliorés (max)", cat: "Survie", cost: 15000, round: 6 },
+      { name: "Optionnel (puissance arme)", cat: "Arme", cost: 13000, round: 7 },
+    ];
+
+    const inputContainer = document.getElementById("inputs");
+    for (let i = 1; i <= 7; i++) {
+      const label = document.createElement("label");
+      label.textContent = `Manche ${i} - Points obtenus : `;
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = "0";
+      input.id = `round${i}`;
+      input.placeholder = "ex : 7000";
+      inputContainer.appendChild(label);
+      inputContainer.appendChild(input);
+      inputContainer.appendChild(document.createElement("br"));
+    }
+
+    function generatePlan() {
+      let html = '<table><thead><tr><th>Manche</th><th>Budget</th><th>Compétences recommandées</th><th>Catégorie</th><th>Coût</th><th>Pouvoir</th><th>Effet stratégique</th></tr></thead><tbody>';
+      let refund = 0;
+      for (let round = 1; round <= 7; round++) {
+        const budget = parseInt(document.getElementById(`round${round}`).value || "0");
+        let available = budget + refund;
+        let skillsInRound = skills.filter(s => s.round === round && s.cost <= available);
+
+        let rows = "";
+        for (let skill of skillsInRound) {
+          available -= skill.cost;
+          rows += `<tr><td>${round}</td><td>${budget}</td><td>${skill.name}</td><td>${skill.cat}</td><td>${skill.cost}</td><td>${powerChoices[round] || "-"}</td><td>-</td></tr>`;
+        }
+
+        if (rows === "") {
+          rows = `<tr><td>${round}</td><td>${budget}</td><td colspan='5'>Pas de compétence accessible à ce palier</td></tr>`;
+        }
+
+        html += rows;
+      }
+      html += "</tbody></table>";
+      document.getElementById("plan").innerHTML = html;
+    }
+  </script>
 </body>
 </html>

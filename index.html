@@ -1,80 +1,122 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>OW2 Stadium Generator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OW2 Generator - Mercy</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #0e0e0e;
-      color: #e0e0e0;
+      background: #111;
+      color: #eee;
       padding: 20px;
     }
-    h1 {
-      color: #00bfff;
+    h1, h2 {
+      color: #4fc3f7;
     }
-    select, input[type=number], button {
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 1rem;
-    }
-    .result {
-      background-color: #1e1e1e;
-      border-radius: 10px;
-      padding: 15px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #555;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #222;
+    }
+    tr:nth-child(even) {
+      background-color: #1a1a1a;
     }
   </style>
 </head>
 <body>
-  <h1>OW2 Stadium - Recommandations de Compétences</h1>
+  <h1>Overwatch 2 - Recommandations pour Mercy (Mode Stadium)</h1>
 
-  <label for="hero">Choisissez votre héros :</label><br>
-  <select id="hero">
-    <option value="mercy">Mercy (Ange)</option>
-    <!-- Future: ajouter d'autres héros ici -->
-  </select><br>
+  <table>
+    <thead>
+      <tr>
+        <th>Manche</th>
+        <th>Budget pts</th>
+        <th>Compétences payantes recommandées</th>
+        <th>Catégorie</th>
+        <th>Coût pts</th>
+        <th>Pouvoir gratuit à choisir</th>
+        <th>Effet clé et intérêt stratégique</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>3500 pts</td>
+        <td>
+          - Boost de soin (Heal Boost)<br>
+          - Soin ciblé (Focused Heal)<br>
+          - Packs de soin améliorés (Med Pack)
+        </td>
+        <td>Survie / Capacité / Survie</td>
+        <td>1000 / 1000 / 1500</td>
+        <td><strong>Triage Unit</strong></td>
+        <td>+30% soins Guardian Angel sur alliés < 50% vie (super clutch)</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>6000 - 9000 pts</td>
+        <td>- Aura revitalisante (Revitalizing Aura)</td>
+        <td>Capacité</td>
+        <td>10000 (à rembourser plus tard)</td>
+        <td>-</td>
+        <td>Améliore soins de zone, investissement tardif</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>9000 - 11000 pts</td>
+        <td>- Soin boosté (Boosted Heal)</td>
+        <td>Capacité</td>
+        <td>11000 (à rembourser plus tard)</td>
+        <td><strong>Distortion</strong></td>
+        <td>Alliés boostés gagnent 20% lifesteal</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>12000 - 13000 pts</td>
+        <td>- Réflexes rapides (Quick Reflexes)</td>
+        <td>Capacité</td>
+        <td>12000 (à rembourser plus tard)</td>
+        <td>-</td>
+        <td>Améliore réactivité de soin</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>13000 - 15000 pts</td>
+        <td>- Amplificateur biotech (Biotech Maximizer)</td>
+        <td>Arme</td>
+        <td>13000</td>
+        <td><strong>Equivalent Exchange</strong></td>
+        <td>3 résurrections avec 33% de cooldown réduit par manche</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>13000 - 15000 pts</td>
+        <td>- Packs de soin améliorés (Amélioration max)</td>
+        <td>Survie</td>
+        <td>15000</td>
+        <td>-</td>
+        <td>Maximiser soin sur packs</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>13000 - 15000 pts</td>
+        <td>- Optionnel selon besoins (ex: puissance arme)</td>
+        <td>Arme</td>
+        <td>Variable</td>
+        <td><strong>Crepuscular Circle</strong></td>
+        <td>Soins et boost auto pendant Valkyrie pour alliés proches</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <label for="points">Points disponibles :</label><br>
-  <input type="number" id="points" value="3500" min="0" /><br>
-
-  <button onclick="generateRecs()">Obtenir des recommandations</button>
-
-  <div id="output" class="result"></div>
-
-  <script>
-    const data = {
-      mercy: [
-        { name: "Caducée : Soin amélioré", type: "Capacité", cost: 3500, effect: "+20% de soin avec le Caducée" },
-        { name: "Caducée : Boost de dégâts", type: "Capacité", cost: 3500, effect: "+20% de boost de dégâts" },
-        { name: "Vol amélioré", type: "Survie", cost: 6000, effect: "Vitesse de Guardian Angel augmentée" },
-        { name: "Résurrection instantanée", type: "Capacité", cost: 9000, effect: "Supprime le temps de cast de la Résurrection" },
-        { name: "Durée de Valkyrie +", type: "Ultime", cost: 9000, effect: "+20% durée de Valkyrie" },
-        { name: "Portée Caducée +", type: "Capacité", cost: 12000, effect: "Augmente la portée du Caducée" },
-        { name: "Soin en chaîne", type: "Capacité", cost: 15000, effect: "Soin en chaîne sur les alliés proches" }
-      ]
-    };
-
-    function generateRecs() {
-      const hero = document.getElementById("hero").value;
-      const points = parseInt(document.getElementById("points").value);
-      const output = document.getElementById("output");
-      const options = data[hero];
-
-      let remaining = points;
-      let result = `<strong>Suggestions pour ${hero} avec ${points} pts :</strong><ul>`;
-
-      for (let item of options) {
-        if (item.cost <= remaining) {
-          result += `<li><strong>${item.name}</strong> (${item.type}) - ${item.cost} pts<br><em>${item.effect}</em></li>`;
-          remaining -= item.cost;
-        }
-      }
-
-      result += `</ul><p>Points restants : ${remaining}</p>`;
-      output.innerHTML = result;
-    }
-  </script>
 </body>
 </html>

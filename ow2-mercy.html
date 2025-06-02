@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Recommandations Overwatch 2 Stadium - Mercy</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; padding: 20px; }
+    h1 { color: #4fc3f7; }
+    label, select, input { display: block; margin: 10px 0; }
+    .section { margin-bottom: 30px; }
+    .results { background: #222; padding: 10px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Recommandations Overwatch 2 Stadium - Mercy</h1>
+
+  <div class="section">
+    <label for="points1">Points après manche 1 :</label>
+    <input type="number" id="points1" min="0" value="3500">
+
+    <label for="points2">Points après manche 2 :</label>
+    <input type="number" id="points2" min="0" value="7000">
+
+    <label for="points3">Points après manche 3 :</label>
+    <input type="number" id="points3" min="0" value="11000">
+
+    <label for="points4">Points après manche 4 :</label>
+    <input type="number" id="points4" min="0" value="13000">
+
+    <button onclick="generateRecommendations()">Générer les recommandations</button>
+  </div>
+
+  <div class="results" id="output"></div>
+
+  <script>
+    const upgrades = [
+      { name: "Portée du Caducée augmentée", cost: 3500, category: "Arme" },
+      { name: "Vitesse du Caducée augmentée", cost: 6000, category: "Arme" },
+      { name: "Durée de Vol augmentée", cost: 9000, category: "Mobilité" },
+      { name: "Résurrection +1 charge", cost: 12000, category: "Capacité" },
+      { name: "Soins augmentés en dessous de 50%", cost: 15000, category: "Survie" },
+    ];
+
+    function generateRecommendations() {
+      const points = [
+        parseInt(document.getElementById('points1').value),
+        parseInt(document.getElementById('points2').value),
+        parseInt(document.getElementById('points3').value),
+        parseInt(document.getElementById('points4').value),
+      ];
+
+      let output = "";
+      let owned = [];
+
+      for (let round = 0; round < points.length; round++) {
+        let p = points[round];
+        let possible = upgrades.filter(u => u.cost <= p && !owned.includes(u.name));
+
+        // prendre la plus chère possible sans dépasser le budget
+        possible.sort((a, b) => b.cost - a.cost);
+        if (possible.length > 0) {
+          let chosen = possible[0];
+          owned.push(chosen.name);
+          output += `<p><strong>Manche ${round + 1} (${p} pts)</strong> : ${chosen.name} (${chosen.category}, ${chosen.cost} pts)</p>`;
+        } else {
+          output += `<p><strong>Manche ${round + 1} (${p} pts)</strong> : Aucun achat possible</p>`;
+        }
+      }
+
+      document.getElementById("output").innerHTML = output;
+    }
+  </script>
+</body>
+</html>

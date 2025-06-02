@@ -3,10 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>OW2 Generator</title>
+  <title>OW2 Stadium Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0e0e0e;
+      color: #e0e0e0;
+      padding: 20px;
+    }
+    h1 {
+      color: #00bfff;
+    }
+    select, input[type=number], button {
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 1rem;
+    }
+    .result {
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>OW2 Generator</h1>
-  <p>Page générée avec succès depuis GitHub Pages 🎉</p>
+  <h1>OW2 Stadium - Recommandations de Compétences</h1>
+
+  <label for="hero">Choisissez votre héros :</label><br>
+  <select id="hero">
+    <option value="mercy">Mercy (Ange)</option>
+    <!-- Future: ajouter d'autres héros ici -->
+  </select><br>
+
+  <label for="points">Points disponibles :</label><br>
+  <input type="number" id="points" value="3500" min="0" /><br>
+
+  <button onclick="generateRecs()">Obtenir des recommandations</button>
+
+  <div id="output" class="result"></div>
+
+  <script>
+    const data = {
+      mercy: [
+        { name: "Caducée : Soin amélioré", type: "Capacité", cost: 3500, effect: "+20% de soin avec le Caducée" },
+        { name: "Caducée : Boost de dégâts", type: "Capacité", cost: 3500, effect: "+20% de boost de dégâts" },
+        { name: "Vol amélioré", type: "Survie", cost: 6000, effect: "Vitesse de Guardian Angel augmentée" },
+        { name: "Résurrection instantanée", type: "Capacité", cost: 9000, effect: "Supprime le temps de cast de la Résurrection" },
+        { name: "Durée de Valkyrie +", type: "Ultime", cost: 9000, effect: "+20% durée de Valkyrie" },
+        { name: "Portée Caducée +", type: "Capacité", cost: 12000, effect: "Augmente la portée du Caducée" },
+        { name: "Soin en chaîne", type: "Capacité", cost: 15000, effect: "Soin en chaîne sur les alliés proches" }
+      ]
+    };
+
+    function generateRecs() {
+      const hero = document.getElementById("hero").value;
+      const points = parseInt(document.getElementById("points").value);
+      const output = document.getElementById("output");
+      const options = data[hero];
+
+      let remaining = points;
+      let result = `<strong>Suggestions pour ${hero} avec ${points} pts :</strong><ul>`;
+
+      for (let item of options) {
+        if (item.cost <= remaining) {
+          result += `<li><strong>${item.name}</strong> (${item.type}) - ${item.cost} pts<br><em>${item.effect}</em></li>`;
+          remaining -= item.cost;
+        }
+      }
+
+      result += `</ul><p>Points restants : ${remaining}</p>`;
+      output.innerHTML = result;
+    }
+  </script>
 </body>
 </html>

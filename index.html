@@ -2,104 +2,171 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OW2 Skill Planner - Mercy</title>
+  <title>OW2 Stadium - Reco Stratégie</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #e0e0e0;
-      margin: 0;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #00BFFF;
-    }
-    input, select, button {
-      margin: 5px 0;
-      padding: 5px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #555;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #1f1f1f;
-    }
-    tr:nth-child(even) {
-      background-color: #1e1e1e;
-    }
+    body { font-family: Arial, sans-serif; background: #111; color: #ddd; padding: 20px; }
+    h1, h2 { color: #4eaaff; }
+    select, input { padding: 5px; margin: 5px 0; }
+    .section { margin-bottom: 20px; }
+    .recommandations { background: #222; padding: 15px; border-radius: 8px; margin-top: 10px; }
+    label { display: block; margin-top: 10px; }
+    .result-block { margin-bottom: 15px; }
   </style>
 </head>
 <body>
-  <h1>OW2 Skill Planner - Mercy</h1>
-  <p>Renseigne les points obtenus manche par manche pour obtenir des recommandations optimales :</p>
-  <div id="inputs"></div>
-  <button onclick="generatePlan()">Générer les recommandations</button>
-  <div id="plan"></div>
+  <h1>OW2 Stadium - Générateur de stratégie</h1>
+
+  <div class="section">
+    <label for="hero">Sélectionnez un héros :</label>
+    <select id="hero">
+      <option value="mercy">Mercy</option>
+      <!-- D'autres personnages seront ajoutés ici -->
+    </select>
+
+    <label for="style">Style de jeu :</label>
+    <select id="style">
+      <option value="heal">Type 1 - Priorité aux soins</option>
+      <option value="damage">Type 2 - Priorité aux dégâts</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <h2>Points disponibles par manche :</h2>
+    <div id="points-inputs"></div>
+    <button onclick="generateRecommendations()">Générer les recommandations</button>
+  </div>
+
+  <div class="section recommandations" id="recommendation-output"></div>
 
   <script>
-    const powerChoices = {
-      1: "Triage Unit",
-      3: "Distortion",
-      5: "Equivalent Exchange",
-      7: "Crepuscular Circle"
-    };
+    const manches = [1, 2, 3, 4, 5, 6, 7];
+    const container = document.getElementById("points-inputs");
 
-    const skills = [
-      { name: "Boost de soin", cat: "Survie", cost: 1000, round: 1 },
-      { name: "Soin ciblé", cat: "Capacité", cost: 1000, round: 1 },
-      { name: "Packs de soin améliorés", cat: "Survie", cost: 1500, round: 1 },
-      { name: "Aura revitalisante", cat: "Capacité", cost: 10000, round: 2 },
-      { name: "Soin boosté", cat: "Capacité", cost: 11000, round: 3 },
-      { name: "Réflexes rapides", cat: "Capacité", cost: 12000, round: 4 },
-      { name: "Amplificateur biotech", cat: "Arme", cost: 13000, round: 5 },
-      { name: "Packs de soin améliorés (max)", cat: "Survie", cost: 15000, round: 6 },
-      { name: "Optionnel (puissance arme)", cat: "Arme", cost: 13000, round: 7 },
-    ];
-
-    const inputContainer = document.getElementById("inputs");
-    for (let i = 1; i <= 7; i++) {
-      const label = document.createElement("label");
-      label.textContent = `Manche ${i} - Points obtenus : `;
+    manches.forEach(manche => {
       const input = document.createElement("input");
       input.type = "number";
-      input.min = "0";
-      input.id = `round${i}`;
-      input.placeholder = "ex : 7000";
-      inputContainer.appendChild(label);
-      inputContainer.appendChild(input);
-      inputContainer.appendChild(document.createElement("br"));
-    }
+      input.min = 0;
+      input.id = `manche${manche}`;
+      input.placeholder = `Manche ${manche} - Points`;
+      container.appendChild(input);
+      container.appendChild(document.createElement("br"));
+    });
 
-    function generatePlan() {
-      let html = '<table><thead><tr><th>Manche</th><th>Budget</th><th>Compétences recommandées</th><th>Catégorie</th><th>Coût</th><th>Pouvoir</th><th>Effet stratégique</th></tr></thead><tbody>';
-      let refund = 0;
-      for (let round = 1; round <= 7; round++) {
-        const budget = parseInt(document.getElementById(`round${round}`).value || "0");
-        let available = budget + refund;
-        let skillsInRound = skills.filter(s => s.round === round && s.cost <= available);
-
-        let rows = "";
-        for (let skill of skillsInRound) {
-          available -= skill.cost;
-          rows += `<tr><td>${round}</td><td>${budget}</td><td>${skill.name}</td><td>${skill.cat}</td><td>${skill.cost}</td><td>${powerChoices[round] || "-"}</td><td>-</td></tr>`;
+    const mercyStrategies = {
+      heal: {
+        1: {
+          achat: [
+            { name: "Boost de soin (Heal Boost)", cout: 1000, cat: "Survie" },
+            { name: "Soin ciblé (Focused Heal)", cout: 1000, cat: "Capacité" },
+            { name: "Packs de soin améliorés (Med Pack)", cout: 1500, cat: "Survie" },
+          ],
+          pouvoir: "Triage Unit"
+        },
+        2: {
+          achat: [],
+          pouvoir: null
+        },
+        3: {
+          achat: [
+            { name: "Soin boosté (Boosted Heal)", cout: 11000, cat: "Capacité" }
+          ],
+          pouvoir: "Distortion"
+        },
+        4: {
+          achat: [
+            { name: "Réflexes rapides (Quick Reflexes)", cout: 12000, cat: "Capacité" }
+          ],
+          pouvoir: null
+        },
+        5: {
+          achat: [
+            { name: "Amplificateur biotech (Biotech Maximizer)", cout: 13000, cat: "Arme" }
+          ],
+          pouvoir: "Equivalent Exchange"
+        },
+        6: {
+          achat: [
+            { name: "Packs de soin améliorés (amélioration max)", cout: 15000, cat: "Survie" }
+          ],
+          pouvoir: null
+        },
+        7: {
+          achat: [{ name: "Optionnel selon besoins (ex: puissance arme)", cout: "Variable", cat: "Arme" }],
+          pouvoir: "Crepuscular Circle"
         }
-
-        if (rows === "") {
-          rows = `<tr><td>${round}</td><td>${budget}</td><td colspan='5'>Pas de compétence accessible à ce palier</td></tr>`;
+      },
+      damage: {
+        1: {
+          achat: [
+            { name: "Cadence du pistolet (Firing Rate)", cout: 1500, cat: "Arme" },
+            { name: "Précision améliorée", cout: 1000, cat: "Arme" },
+            { name: "Boost de soin (Heal Boost)", cout: 1000, cat: "Survie" }
+          ],
+          pouvoir: "Battle Medic"
+        },
+        2: {
+          achat: [
+            { name: "Énergie offensive (Damage Boost+)", cout: 3000, cat: "Capacité" }
+          ],
+          pouvoir: null
+        },
+        3: {
+          achat: [
+            { name: "Tir à tête (Headshot Multiplier)", cout: 4000, cat: "Arme" }
+          ],
+          pouvoir: "Distortion"
+        },
+        4: {
+          achat: [
+            { name: "Vol de vie (Lifesteal)", cout: 7000, cat: "Arme" }
+          ],
+          pouvoir: null
+        },
+        5: {
+          achat: [
+            { name: "Soin résiduel sur tir (Sympathetic Recovery+)", cout: 12000, cat: "Capacité" }
+          ],
+          pouvoir: "Equivalent Exchange"
+        },
+        6: {
+          achat: [],
+          pouvoir: null
+        },
+        7: {
+          achat: [
+            { name: "Réduction recharge pistolet", cout: 6000, cat: "Arme" }
+          ],
+          pouvoir: "Crepuscular Circle"
         }
-
-        html += rows;
       }
-      html += "</tbody></table>";
-      document.getElementById("plan").innerHTML = html;
+    };
+
+    function generateRecommendations() {
+      const hero = document.getElementById("hero").value;
+      const style = document.getElementById("style").value;
+      const recoDiv = document.getElementById("recommendation-output");
+      const data = mercyStrategies[style];
+      recoDiv.innerHTML = `<h2>Stratégie ${style === "heal" ? "Soin" : "Dégâts"} pour ${hero.charAt(0).toUpperCase() + hero.slice(1)}</h2>`;
+
+      manches.forEach(manche => {
+        const points = parseInt(document.getElementById(`manche${manche}`).value || "0");
+        const step = data[manche];
+
+        let block = `<div class="result-block"><strong>Manche ${manche} (${points} pts)</strong><ul>`;
+
+        step.achat.forEach(achat => {
+          block += `<li>${achat.name} — ${achat.cout} pts (${achat.cat})</li>`;
+        });
+
+        block += "</ul>";
+
+        if (step.pouvoir) {
+          block += `<em>🧠 Pouvoir gratuit conseillé : <strong>${step.pouvoir}</strong></em>`;
+        }
+
+        block += "</div>";
+        recoDiv.innerHTML += block;
+      });
     }
   </script>
 </body>

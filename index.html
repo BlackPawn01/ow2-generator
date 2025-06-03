@@ -25,6 +25,7 @@
       <option value="moira">Moira</option>
       <option value="lucio">Lucio</option>
       <option value="ana">Ana</option>
+      <option value="juno">Juno</option>
     </select>
 
     <label for="style">Style de jeu :</label>
@@ -384,6 +385,101 @@ const strategies = {
         { name: "Sérum offensif (Ultimate Damage Boost)", cout: "Variable", cat: "Capacité" }
       ],
       pouvoir: "Nano Surge"
+    }
+  }
+},
+  juno: {
+  heal: {
+    1: {
+      achat: [
+        { name: "Émission de soin amplifiée", cout: 1000, cat: "Capacité" },
+        { name: "Recharge plus rapide de l'orbe de soin", cout: 1000, cat: "Arme" },
+        { name: "Champ de soin étendu", cout: 1500, cat: "Capacité" }
+      ],
+      pouvoir: "Champ vital"
+    },
+    2: {
+      achat: [
+        { name: "Soin sur durée amélioré", cout: 3000, cat: "Capacité" },
+        { name: "Barrière protectrice à distance", cout: 4000, cat: "Survie" }
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Effet de soin en chaîne", cout: 9000, cat: "Capacité" }
+      ],
+      pouvoir: "Résonance bienveillante"
+    },
+    4: {
+      achat: [
+        { name: "Champ de soin mobile", cout: 11000, cat: "Capacité" }
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "Orbe auto-guidée", cout: 13000, cat: "Arme" }
+      ],
+      pouvoir: "Amplificateur vital"
+    },
+    6: {
+      achat: [
+        { name: "Double orbe de soin", cout: 15000, cat: "Arme" }
+      ],
+      pouvoir: null
+    },
+    7: {
+      achat: [
+        { name: "Transcendance lumineuse (ultime de soin max)", cout: "Variable", cat: "Capacité" }
+      ],
+      pouvoir: "Apogée"
+    }
+  },
+  damage: {
+    1: {
+      achat: [
+        { name: "Tir à dispersion accrue", cout: 1000, cat: "Arme" },
+        { name: "Orbe de choc à impact rapide", cout: 1500, cat: "Capacité" }
+      ],
+      pouvoir: "Onde perturbatrice"
+    },
+    2: {
+      achat: [
+        { name: "Barrière courte portée renforcée", cout: 3000, cat: "Survie" },
+        { name: "Tir chargé plus rapide", cout: 4000, cat: "Arme" }
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Choc énergétique à effet de zone", cout: 9000, cat: "Capacité" }
+      ],
+      pouvoir: "Résonance destructrice"
+    },
+    4: {
+      achat: [
+        { name: "Vitesse de déplacement augmentée après élimination", cout: 11000, cat: "Mobilité" }
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "Tir double orbe (soin/dégâts)", cout: 13000, cat: "Arme" }
+      ],
+      pouvoir: "Amplificateur à polarité inversée"
+    },
+    6: {
+      achat: [
+        { name: "Cooldown de l'onde perturbatrice réduit", cout: 15000, cat: "Capacité" }
+      ],
+      pouvoir: null
+    },
+    7: {
+      achat: [
+        { name: "Cataclysme énergétique (ultime dégâts max)", cout: "Variable", cat: "Capacité" }
+      ],
+      pouvoir: "Apogée"
     }
   }
 },

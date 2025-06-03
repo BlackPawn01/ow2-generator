@@ -11,6 +11,7 @@
     .recommandations { background: #222; padding: 15px; border-radius: 8px; margin-top: 10px; }
     label { display: block; margin-top: 10px; }
     .result-block { margin-bottom: 15px; }
+    .inaccessible { color: #f44336; } /* rouge */
   </style>
 </head>
 <body>
@@ -209,7 +210,17 @@
         let block = `<div class="result-block"><strong>Manche ${manche} (${points} pts)</strong><ul>`;
 
         step.achat.forEach(achat => {
-          block += `<li>${achat.name} — ${achat.cout} pts (${achat.cat})</li>`;
+          // On filtre les achats avec coût numérique uniquement
+          if (typeof achat.cout === "number") {
+            if (points >= achat.cout) {
+              // Achat accessible
+              block += `<li>${achat.name} — ${achat.cout} pts (${achat.cat})</li>`;
+            } else {
+              // Achat inaccessible => affiché en rouge
+              block += `<li class="inaccessible">${achat.name} — ${achat.cout} pts (${achat.cat})</li>`;
+            }
+          }
+          // Si cout non numérique (ex: "Variable"), on ne l'affiche pas
         });
 
         block += "</ul>";

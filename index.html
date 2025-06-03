@@ -20,7 +20,7 @@
     <label for="hero">Sélectionnez un héros :</label>
     <select id="hero">
       <option value="mercy">Mercy</option>
-      <!-- D'autres personnages seront ajoutés ici -->
+      <option value="kiriko">Kiriko</option>
     </select>
 
     <label for="style">Style de jeu :</label>
@@ -42,6 +42,7 @@
     const manches = [1, 2, 3, 4, 5, 6, 7];
     const container = document.getElementById("points-inputs");
 
+    // Création des inputs
     manches.forEach(manche => {
       const input = document.createElement("input");
       input.type = "number";
@@ -52,91 +53,144 @@
       container.appendChild(document.createElement("br"));
     });
 
-    const mercyStrategies = {
-      heal: {
-        1: {
-          achat: [
-            { name: "Boost de soin (Heal Boost)", cout: 1000, cat: "Survie" },
-            { name: "Soin ciblé (Focused Heal)", cout: 1000, cat: "Capacité" },
-            { name: "Packs de soin améliorés (Med Pack)", cout: 1500, cat: "Survie" },
-          ],
-          pouvoir: "Triage Unit"
+    const strategies = {
+      mercy: {
+        heal: {
+          1: {
+            achat: [
+              { name: "Boost de soin (Heal Boost)", cout: 1000, cat: "Survie" },
+              { name: "Soin ciblé (Focused Heal)", cout: 1000, cat: "Capacité" },
+              { name: "Packs de soin améliorés (Med Pack)", cout: 1500, cat: "Survie" },
+            ],
+            pouvoir: "Triage Unit"
+          },
+          2: { achat: [], pouvoir: null },
+          3: {
+            achat: [{ name: "Soin boosté (Boosted Heal)", cout: 11000, cat: "Capacité" }],
+            pouvoir: "Distortion"
+          },
+          4: {
+            achat: [{ name: "Réflexes rapides (Quick Reflexes)", cout: 12000, cat: "Capacité" }],
+            pouvoir: null
+          },
+          5: {
+            achat: [{ name: "Amplificateur biotech (Biotech Maximizer)", cout: 13000, cat: "Arme" }],
+            pouvoir: "Equivalent Exchange"
+          },
+          6: {
+            achat: [{ name: "Packs de soin améliorés (amélioration max)", cout: 15000, cat: "Survie" }],
+            pouvoir: null
+          },
+          7: {
+            achat: [{ name: "Optionnel selon besoins (ex: puissance arme)", cout: "Variable", cat: "Arme" }],
+            pouvoir: "Crepuscular Circle"
+          }
         },
-        2: {
-          achat: [],
-          pouvoir: null
-        },
-        3: {
-          achat: [
-            { name: "Soin boosté (Boosted Heal)", cout: 11000, cat: "Capacité" }
-          ],
-          pouvoir: "Distortion"
-        },
-        4: {
-          achat: [
-            { name: "Réflexes rapides (Quick Reflexes)", cout: 12000, cat: "Capacité" }
-          ],
-          pouvoir: null
-        },
-        5: {
-          achat: [
-            { name: "Amplificateur biotech (Biotech Maximizer)", cout: 13000, cat: "Arme" }
-          ],
-          pouvoir: "Equivalent Exchange"
-        },
-        6: {
-          achat: [
-            { name: "Packs de soin améliorés (amélioration max)", cout: 15000, cat: "Survie" }
-          ],
-          pouvoir: null
-        },
-        7: {
-          achat: [{ name: "Optionnel selon besoins (ex: puissance arme)", cout: "Variable", cat: "Arme" }],
-          pouvoir: "Crepuscular Circle"
+        damage: {
+          1: {
+            achat: [
+              { name: "Cadence du pistolet (Firing Rate)", cout: 1500, cat: "Arme" },
+              { name: "Précision améliorée", cout: 1000, cat: "Arme" },
+              { name: "Boost de soin (Heal Boost)", cout: 1000, cat: "Survie" }
+            ],
+            pouvoir: "Battle Medic"
+          },
+          2: {
+            achat: [{ name: "Énergie offensive (Damage Boost+)", cout: 3000, cat: "Capacité" }],
+            pouvoir: null
+          },
+          3: {
+            achat: [{ name: "Tir à tête (Headshot Multiplier)", cout: 4000, cat: "Arme" }],
+            pouvoir: "Distortion"
+          },
+          4: {
+            achat: [{ name: "Vol de vie (Lifesteal)", cout: 7000, cat: "Arme" }],
+            pouvoir: null
+          },
+          5: {
+            achat: [{ name: "Soin résiduel sur tir (Sympathetic Recovery+)", cout: 12000, cat: "Capacité" }],
+            pouvoir: "Equivalent Exchange"
+          },
+          6: { achat: [], pouvoir: null },
+          7: {
+            achat: [{ name: "Réduction recharge pistolet", cout: 6000, cat: "Arme" }],
+            pouvoir: "Crepuscular Circle"
+          }
         }
       },
-      damage: {
-        1: {
-          achat: [
-            { name: "Cadence du pistolet (Firing Rate)", cout: 1500, cat: "Arme" },
-            { name: "Précision améliorée", cout: 1000, cat: "Arme" },
-            { name: "Boost de soin (Heal Boost)", cout: 1000, cat: "Survie" }
-          ],
-          pouvoir: "Battle Medic"
+      kiriko: {
+        heal: {
+          1: {
+            achat: [
+              { name: "Soin ciblé (Focused Heal)", cout: 1000, cat: "Capacité" },
+              { name: "Soin rapide (Rapid Healing)", cout: 1500, cat: "Survie" },
+              { name: "Talismans rebondissants (Bouncy Healing Ofuda)", cout: 1000, cat: "Capacité" }
+            ],
+            pouvoir: "Triage Unit"
+          },
+          2: {
+            achat: [
+              { name: "Téléportation rapide (Quick Step)", cout: 3000, cat: "Survie" },
+              { name: "Résistance spirituelle (Spiritual Fortitude)", cout: 4000, cat: "Survie" }
+            ],
+            pouvoir: null
+          },
+          3: {
+            achat: [{ name: "Puissance de soin (Healing Boost)", cout: 9000, cat: "Capacité" }],
+            pouvoir: "Glass Extra Full"
+          },
+          4: {
+            achat: [{ name: "Déblocage instantané (Clarity Unleashed)", cout: 11000, cat: "Capacité" }],
+            pouvoir: null
+          },
+          5: {
+            achat: [{ name: "Amplification de zone (Area Heal Surge)", cout: 12000, cat: "Capacité" }],
+            pouvoir: "Equivalent Exchange"
+          },
+          6: {
+            achat: [{ name: "Récupération (Resilient Recovery)", cout: 12000, cat: "Survie" }],
+            pouvoir: null
+          },
+          7: {
+            achat: [{ name: "Circle of Harmony", cout: 15000, cat: "Capacité" }],
+            pouvoir: "Crepuscular Circle"
+          }
         },
-        2: {
-          achat: [
-            { name: "Énergie offensive (Damage Boost+)", cout: 3000, cat: "Capacité" }
-          ],
-          pouvoir: null
-        },
-        3: {
-          achat: [
-            { name: "Tir à tête (Headshot Multiplier)", cout: 4000, cat: "Arme" }
-          ],
-          pouvoir: "Distortion"
-        },
-        4: {
-          achat: [
-            { name: "Vol de vie (Lifesteal)", cout: 7000, cat: "Arme" }
-          ],
-          pouvoir: null
-        },
-        5: {
-          achat: [
-            { name: "Soin résiduel sur tir (Sympathetic Recovery+)", cout: 12000, cat: "Capacité" }
-          ],
-          pouvoir: "Equivalent Exchange"
-        },
-        6: {
-          achat: [],
-          pouvoir: null
-        },
-        7: {
-          achat: [
-            { name: "Réduction recharge pistolet", cout: 6000, cat: "Arme" }
-          ],
-          pouvoir: "Crepuscular Circle"
+        damage: {
+          1: {
+            achat: [
+              { name: "Recharge rapide (Faster Kunai)", cout: 1500, cat: "Arme" },
+              { name: "Tir critique facilité (Critical Guidance)", cout: 2000, cat: "Arme" }
+            ],
+            pouvoir: "Battle Medic"
+          },
+          2: {
+            achat: [
+              { name: "Téléportation rapide (Quick Step)", cout: 3000, cat: "Survie" },
+              { name: "Kunai perçant (Piercing Kunai)", cout: 4000, cat: "Arme" }
+            ],
+            pouvoir: null
+          },
+          3: {
+            achat: [{ name: "Boost dégâts (Damage Boost)", cout: 9000, cat: "Capacité" }],
+            pouvoir: "Distortion"
+          },
+          4: {
+            achat: [{ name: "Soin en recharge (Ofuda on Reload)", cout: 11000, cat: "Capacité" }],
+            pouvoir: null
+          },
+          5: {
+            achat: [{ name: "Kunai rebondissants (Bouncing Kunai)", cout: 12000, cat: "Arme" }],
+            pouvoir: "Equivalent Exchange"
+          },
+          6: {
+            achat: [{ name: "Explosion critique (Exploding Crits)", cout: 14000, cat: "Arme" }],
+            pouvoir: null
+          },
+          7: {
+            achat: [{ name: "Amplification de zone (Area Heal Surge)", cout: 15000, cat: "Capacité" }],
+            pouvoir: "Crepuscular Circle"
+          }
         }
       }
     };
@@ -145,7 +199,7 @@
       const hero = document.getElementById("hero").value;
       const style = document.getElementById("style").value;
       const recoDiv = document.getElementById("recommendation-output");
-      const data = mercyStrategies[style];
+      const data = strategies[hero][style];
       recoDiv.innerHTML = `<h2>Stratégie ${style === "heal" ? "Soin" : "Dégâts"} pour ${hero.charAt(0).toUpperCase() + hero.slice(1)}</h2>`;
 
       manches.forEach(manche => {

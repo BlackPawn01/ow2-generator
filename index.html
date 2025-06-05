@@ -2,620 +2,148 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>OW2 Stadium - Reco Stratégie</title>
+  <title>OW2 Stadium - Générateur de stratégie</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #111; color: #ddd; padding: 20px; }
-    h1, h2 { color: #4eaaff; }
-    select, input { padding: 5px; margin: 5px 0; }
-    .section { margin-bottom: 20px; }
-    .recommandations { background: #222; padding: 15px; border-radius: 8px; margin-top: 10px; }
-    label { display: block; margin-top: 10px; }
-    .result-block { margin-bottom: 15px; }
-    .inaccessible { color: #f44336; } /* rouge */
+    body {
+      background-color: #0b0c10;
+      color: #c5c6c7;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    select, input, button {
+      margin: 5px;
+      padding: 5px;
+    }
+    .recommandation {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #45a29e;
+    }
+    img {
+      float: right;
+      height: 200px;
+      width: 100px;
+      object-fit: contain;
+    }
   </style>
 </head>
 <body>
   <h1>OW2 Stadium - Générateur de stratégie</h1>
 
-  <div class="section">
-    <label for="hero">Sélectionnez un héros :</label>
-    <select id="hero">
-      <option value="mercy">Mercy</option>
-      <option value="kiriko">Kiriko</option>
-      <option value="moira">Moira</option>
-      <option value="lucio">Lucio</option>
-      <option value="ana">Ana</option>
-      <option value="juno">Juno</option>
-    </select>
+  <label for="roleSelect">Rôle :</label>
+  <select id="roleSelect">
+    <option value="soutien">Soutien</option>
+    <option value="dps" disabled>DPS (à venir)</option>
+    <option value="tank" disabled>Tank (à venir)</option>
+  </select>
 
-    <label for="style">Style de jeu :</label>
-    <select id="style">
-      <option value="heal">Type 1 - Priorité aux soins</option>
-      <option value="damage">Type 2 - Priorité aux dégâts</option>
-    </select>
+  <label for="heroSelect">Héros :</label>
+  <select id="heroSelect">
+    <option value="Mercy">Mercy</option>
+    <option value="Kiriko">Kiriko</option>
+    <option value="Moira">Moira</option>
+    <option value="Lucio">Lucio</option>
+    <option value="Ana">Ana</option>
+    <option value="Juno">Juno</option>
+  </select>
+
+  <label for="styleSelect">Style de jeu :</label>
+  <select id="styleSelect">
+    <option value="heal">Priorité soins</option>
+    <option value="damage">Priorité dégâts</option>
+  </select>
+
+  <div>
+    <h3>Points disponibles par manche :</h3>
+    <div id="pointsInputs">
+      <label>Manche 1 : <input type="number" id="points1" value="1000" min="0" /></label><br />
+      <label>Manche 2 : <input type="number" id="points2" value="2000" min="0" /></label><br />
+      <label>Manche 3 : <input type="number" id="points3" value="3000" min="0" /></label><br />
+      <label>Manche 4 : <input type="number" id="points4" value="4000" min="0" /></label><br />
+      <label>Manche 5 : <input type="number" id="points5" value="5000" min="0" /></label><br />
+      <label>Manche 6 : <input type="number" id="points6" value="6000" min="0" /></label><br />
+      <label>Manche 7 : <input type="number" id="points7" value="7000" min="0" /></label><br />
+    </div>
   </div>
 
-  <div class="section">
-    <h2>Points disponibles par manche :</h2>
-    <div id="points-inputs"></div>
-    <button onclick="generateRecommendations()">Générer les recommandations</button>
-  </div>
+  <button onclick="generateRecommendations()">Générer les recommandations</button>
 
-  <div class="section recommandations" id="recommendation-output"></div>
+  <div id="resultat" class="recommandation"></div>
+  <img id="heroImage" src="" alt="Héros sélectionné" />
 
   <script>
-    const manches = [1, 2, 3, 4, 5, 6, 7];
-    const container = document.getElementById("points-inputs");
+    const strategies = {
+      Mercy: {
+        heal: {
+          1: [{ nom: "Soin rapide", cout: 1000, categorie: "Capacité" }],
+          2: [{ nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" }],
+          3: [{ nom: "Amplification de rayon", cout: 5000, categorie: "Arme" }],
+          4: [{ nom: "Auto-régénération améliorée", cout: 6000, categorie: "Survie" }],
+          5: [{ nom: "Résurrection rapide", cout: 9000, categorie: "Capacité" }],
+          6: [],
+          7: []
+        },
+        damage: {
+          1: [{ nom: "Pistolet boosté", cout: 1000, categorie: "Arme" }],
+          2: [{ nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" }],
+          3: [{ nom: "Cadence accrue", cout: 5000, categorie: "Arme" }],
+          4: [{ nom: "Combo tir secondaire", cout: 6000, categorie: "Capacité" }],
+          5: [{ nom: "Dernière chance", cout: 9000, categorie: "Survie" }],
+          6: [],
+          7: []
+        }
+      }
+      // Ajouter d'autres héros ici avec leurs catégories corrigées
+    };
 
-    // Création des inputs
-    manches.forEach(manche => {
-      const input = document.createElement("input");
-      input.type = "number";
-      input.min = 0;
-      input.id = `manche${manche}`;
-      input.placeholder = `Manche ${manche} - Points`;
-      container.appendChild(input);
-      container.appendChild(document.createElement("br"));
-    });
-
-const strategies = {
-  mercy: {
-    heal: {
-      1: {
-        achat: [
-          { name: "Boost de soin (Heal Boost)", cout: 1000, cat: "Survie" },
-          { name: "Soin ciblé (Focused Heal)", cout: 1000, cat: "Capacité" },
-          { name: "Packs de soin améliorés (Med Pack)", cout: 1500, cat: "Survie" },
-        ],
-        pouvoir: "Triage Unit"
-      },
-      2: { achat: [], pouvoir: null },
-      3: {
-        achat: [{ name: "Soin boosté (Boosted Heal)", cout: 11000, cat: "Capacité" }],
-        pouvoir: "Distortion"
-      },
-      4: {
-        achat: [{ name: "Réflexes rapides (Quick Reflexes)", cout: 12000, cat: "Capacité" }],
-        pouvoir: null
-      },
-      5: {
-        achat: [{ name: "Amplificateur biotech (Biotech Maximizer)", cout: 13000, cat: "Arme" }],
-        pouvoir: "Equivalent Exchange"
-      },
-      6: {
-        achat: [{ name: "Packs de soin améliorés (amélioration max)", cout: 15000, cat: "Survie" }],
-        pouvoir: null
-      },
-      7: {
-        achat: [{ name: "Optionnel selon besoins (ex: puissance arme)", cout: "Variable", cat: "Arme" }],
-        pouvoir: "Crepuscular Circle"
-      }
-    },
-    damage: {
-      1: {
-        achat: [
-          { name: "Cadence du pistolet (Firing Rate)", cout: 1500, cat: "Arme" },
-          { name: "Précision améliorée", cout: 1000, cat: "Arme" },
-          { name: "Boost de soin (Heal Boost)", cout: 1000, cat: "Survie" }
-        ],
-        pouvoir: "Battle Medic"
-      },
-      2: {
-        achat: [{ name: "Énergie offensive (Damage Boost+)", cout: 3000, cat: "Capacité" }],
-        pouvoir: null
-      },
-      3: {
-        achat: [{ name: "Tir à tête (Headshot Multiplier)", cout: 4000, cat: "Arme" }],
-        pouvoir: "Distortion"
-      },
-      4: {
-        achat: [{ name: "Vol de vie (Lifesteal)", cout: 7000, cat: "Arme" }],
-        pouvoir: null
-      },
-      5: {
-        achat: [{ name: "Soin résiduel sur tir (Sympathetic Recovery+)", cout: 12000, cat: "Capacité" }],
-        pouvoir: "Equivalent Exchange"
-      },
-      6: { achat: [], pouvoir: null },
-      7: {
-        achat: [{ name: "Réduction recharge pistolet", cout: 6000, cat: "Arme" }],
-        pouvoir: "Crepuscular Circle"
-      }
+    function isValidCost(cout) {
+      return (cout <= 1500 || (cout >= 3750 && cout <= 6000) || cout >= 9000);
     }
-  },
-  kiriko: {
-    heal: {
-      1: {
-        achat: [
-          { name: "Soin ciblé (Focused Heal)", cout: 1000, cat: "Capacité" },
-          { name: "Soin rapide (Rapid Healing)", cout: 1500, cat: "Survie" },
-          { name: "Talismans rebondissants (Bouncy Healing Ofuda)", cout: 1000, cat: "Capacité" }
-        ],
-        pouvoir: "Triage Unit"
-      },
-      2: {
-        achat: [
-          { name: "Téléportation rapide (Quick Step)", cout: 3000, cat: "Survie" },
-          { name: "Résistance spirituelle (Spiritual Fortitude)", cout: 4000, cat: "Survie" }
-        ],
-        pouvoir: null
-      },
-      3: {
-        achat: [{ name: "Puissance de soin (Healing Boost)", cout: 9000, cat: "Capacité" }],
-        pouvoir: "Glass Extra Full"
-      },
-      4: {
-        achat: [{ name: "Déblocage instantané (Clarity Unleashed)", cout: 11000, cat: "Capacité" }],
-        pouvoir: null
-      },
-      5: {
-        achat: [{ name: "Amplification de zone (Area Heal Surge)", cout: 12000, cat: "Capacité" }],
-        pouvoir: "Equivalent Exchange"
-      },
-      6: {
-        achat: [{ name: "Récupération (Resilient Recovery)", cout: 12000, cat: "Survie" }],
-        pouvoir: null
-      },
-      7: {
-        achat: [{ name: "Circle of Harmony", cout: 15000, cat: "Capacité" }],
-        pouvoir: "Crepuscular Circle"
-      }
-    },
-    damage: {
-      1: {
-        achat: [
-          { name: "Recharge rapide (Faster Kunai)", cout: 1500, cat: "Arme" },
-          { name: "Tir critique facilité (Critical Guidance)", cout: 2000, cat: "Arme" }
-        ],
-        pouvoir: "Battle Medic"
-      },
-      2: {
-        achat: [
-          { name: "Téléportation rapide (Quick Step)", cout: 3000, cat: "Survie" },
-          { name: "Kunai perçant (Piercing Kunai)", cout: 4000, cat: "Arme" }
-        ],
-        pouvoir: null
-      },
-      3: {
-        achat: [{ name: "Boost dégâts (Damage Boost)", cout: 9000, cat: "Capacité" }],
-        pouvoir: "Distortion"
-      },
-      4: {
-        achat: [{ name: "Soin en recharge (Ofuda on Reload)", cout: 11000, cat: "Capacité" }],
-        pouvoir: null
-      },
-      5: {
-        achat: [{ name: "Kunai rebondissants (Bouncing Kunai)", cout: 12000, cat: "Arme" }],
-        pouvoir: "Equivalent Exchange"
-      },
-      6: {
-        achat: [{ name: "Explosion critique (Exploding Crits)", cout: 14000, cat: "Arme" }],
-        pouvoir: null
-      },
-      7: {
-        achat: [{ name: "Amplification de zone (Area Heal Surge)", cout: 15000, cat: "Capacité" }],
-        pouvoir: "Crepuscular Circle"
-      }
-    }
-  },
-  lucio: {
-  heal: {
-    1: {
-      achat: [
-        { name: "Boost de soins AoE (Area Heal Boost)", cout: 1000, cat: "Capacité" },
-        { name: "Réduction cooldown Crossfade", cout: 1000, cat: "Capacité" },
-        { name: "Armure sonore (Sound Armor)", cout: 1500, cat: "Survie" }
-      ],
-      pouvoir: "Sonic Pulse"
-    },
-    2: {
-      achat: [
-        { name: "Accélération améliorée (Speed Boost+)", cout: 3000, cat: "Capacité" },
-        { name: "Mur défensif (Wall Defense)", cout: 4000, cat: "Survie" }
-      ],
-      pouvoir: null
-    },
-    3: {
-      achat: [
-        { name: "Portée de soins augmentée (Wide Crossfade)", cout: 9000, cat: "Capacité" }
-      ],
-      pouvoir: "Tempo Shift"
-    },
-    4: {
-      achat: [
-        { name: "Résistance accrue (Sound Shield)", cout: 11000, cat: "Survie" }
-      ],
-      pouvoir: null
-    },
-    5: {
-      achat: [
-        { name: "Ampli de zone (Area Amp+)", cout: 13000, cat: "Capacité" }
-      ],
-      pouvoir: "Reverberation"
-    },
-    6: {
-      achat: [
-        { name: "Vitesse + soins synchronisés (Sync Boost)", cout: 15000, cat: "Capacité" }
-      ],
-      pouvoir: null
-    },
-    7: {
-      achat: [
-        { name: "Aura de soutien ultime (Final Echo)", cout: "Variable", cat: "Capacité" }
-      ],
-      pouvoir: "Sonic Tempest"
-    }
-  },
-  damage: {
-    1: {
-      achat: [
-        { name: "Cadence de tir (Firing Boost)", cout: 1500, cat: "Arme" },
-        { name: "Réduction cooldown Boop (Shorter Boop CD)", cout: 1000, cat: "Capacité" }
-      ],
-      pouvoir: "Soundwave Slam"
-    },
-    2: {
-      achat: [
-        { name: "Projectile perçant (Piercing Soundwave)", cout: 3000, cat: "Arme" },
-        { name: "Vitesse murale (Wall Ride Boost)", cout: 4000, cat: "Survie" }
-      ],
-      pouvoir: null
-    },
-    3: {
-      achat: [
-        { name: "Rebond critique (Critical Bounce)", cout: 9000, cat: "Arme" }
-      ],
-      pouvoir: "Tempo Shift"
-    },
-    4: {
-      achat: [
-        { name: "Dégâts augmentés en vitesse (Speed Dmg Amp)", cout: 11000, cat: "Capacité" }
-      ],
-      pouvoir: null
-    },
-    5: {
-      achat: [
-        { name: "Boop à ondes multiples (Multiwave Boop)", cout: 13000, cat: "Capacité" }
-      ],
-      pouvoir: "Reverberation"
-    },
-    6: {
-      achat: [
-        { name: "Tirs rebondissants (Bouncing Beats)", cout: 15000, cat: "Arme" }
-      ],
-      pouvoir: null
-    },
-    7: {
-      achat: [
-        { name: "Amplification ultime (Overdrive Mode)", cout: "Variable", cat: "Capacité" }
-      ],
-      pouvoir: "Sonic Tempest"
-    }
-  }
-},
-  ana: {
-  heal: {
-    1: {
-      achat: [
-        { name: "Capacité de soins augmentée (Heal Boost)", cout: 1000, cat: "Capacité" },
-        { name: "Recharge plus rapide du tir soignant", cout: 1000, cat: "Arme" },
-        { name: "Grenade bioréactive étendue", cout: 1500, cat: "Capacité" }
-      ],
-      pouvoir: "Nano Spark"
-    },
-    2: {
-      achat: [
-        { name: "Dodo prolongé (Sleep+)", cout: 3000, cat: "Capacité" },
-        { name: "Auto-guérison lente", cout: 4000, cat: "Survie" }
-      ],
-      pouvoir: null
-    },
-    3: {
-      achat: [
-        { name: "Grenade améliorée (Double effet heal/dmg)", cout: 9000, cat: "Capacité" }
-      ],
-      pouvoir: "Biotic Pulse"
-    },
-    4: {
-      achat: [
-        { name: "Vitesse de visée accélérée", cout: 11000, cat: "Arme" }
-      ],
-      pouvoir: null
-    },
-    5: {
-      achat: [
-        { name: "Dard régénératif (Regen Dart)", cout: 13000, cat: "Capacité" }
-      ],
-      pouvoir: "Stimulant Alpha"
-    },
-    6: {
-      achat: [
-        { name: "Grenade à double charge", cout: 15000, cat: "Capacité" }
-      ],
-      pouvoir: null
-    },
-    7: {
-      achat: [
-        { name: "Sérum héroïque (Ultimate Biotic Boost)", cout: "Variable", cat: "Capacité" }
-      ],
-      pouvoir: "Nano Surge"
-    }
-  },
-  damage: {
-    1: {
-      achat: [
-        { name: "Recharge plus rapide du tir offensif", cout: 1000, cat: "Arme" },
-        { name: "Grenade bioréactive côté dégâts", cout: 1500, cat: "Capacité" }
-      ],
-      pouvoir: "Venom Dart"
-    },
-    2: {
-      achat: [
-        { name: "Dodo à impact rapide", cout: 3000, cat: "Capacité" },
-        { name: "Visée rapide", cout: 4000, cat: "Arme" }
-      ],
-      pouvoir: null
-    },
-    3: {
-      achat: [
-        { name: "Grenade anti-heal étendue", cout: 9000, cat: "Capacité" }
-      ],
-      pouvoir: "Biotic Pulse"
-    },
-    4: {
-      achat: [
-        { name: "Effet poison sur les flèches", cout: 11000, cat: "Arme" }
-      ],
-      pouvoir: null
-    },
-    5: {
-      achat: [
-        { name: "Double fléchette empoisonnée", cout: 13000, cat: "Arme" }
-      ],
-      pouvoir: "Stimulant Alpha"
-    },
-    6: {
-      achat: [
-        { name: "Réduction du cooldown de sommeil", cout: 15000, cat: "Capacité" }
-      ],
-      pouvoir: null
-    },
-    7: {
-      achat: [
-        { name: "Sérum offensif (Ultimate Damage Boost)", cout: "Variable", cat: "Capacité" }
-      ],
-      pouvoir: "Nano Surge"
-    }
-  }
-},
-  juno: {
-  heal: {
-    1: {
-      achat: [
-        { name: "Émission de soin amplifiée", cout: 1000, cat: "Capacité" },
-        { name: "Recharge plus rapide de l'orbe de soin", cout: 1000, cat: "Arme" },
-        { name: "Champ de soin étendu", cout: 1500, cat: "Capacité" }
-      ],
-      pouvoir: "Champ vital"
-    },
-    2: {
-      achat: [
-        { name: "Soin sur durée amélioré", cout: 3000, cat: "Capacité" },
-        { name: "Barrière protectrice à distance", cout: 4000, cat: "Survie" }
-      ],
-      pouvoir: null
-    },
-    3: {
-      achat: [
-        { name: "Effet de soin en chaîne", cout: 9000, cat: "Capacité" }
-      ],
-      pouvoir: "Résonance bienveillante"
-    },
-    4: {
-      achat: [
-        { name: "Champ de soin mobile", cout: 11000, cat: "Capacité" }
-      ],
-      pouvoir: null
-    },
-    5: {
-      achat: [
-        { name: "Orbe auto-guidée", cout: 13000, cat: "Arme" }
-      ],
-      pouvoir: "Amplificateur vital"
-    },
-    6: {
-      achat: [
-        { name: "Double orbe de soin", cout: 15000, cat: "Arme" }
-      ],
-      pouvoir: null
-    },
-    7: {
-      achat: [
-        { name: "Transcendance lumineuse (ultime de soin max)", cout: "Variable", cat: "Capacité" }
-      ],
-      pouvoir: "Apogée"
-    }
-  },
-  damage: {
-    1: {
-      achat: [
-        { name: "Tir à dispersion accrue", cout: 1000, cat: "Arme" },
-        { name: "Orbe de choc à impact rapide", cout: 1500, cat: "Capacité" }
-      ],
-      pouvoir: "Onde perturbatrice"
-    },
-    2: {
-      achat: [
-        { name: "Barrière courte portée renforcée", cout: 3000, cat: "Survie" },
-        { name: "Tir chargé plus rapide", cout: 4000, cat: "Arme" }
-      ],
-      pouvoir: null
-    },
-    3: {
-      achat: [
-        { name: "Choc énergétique à effet de zone", cout: 9000, cat: "Capacité" }
-      ],
-      pouvoir: "Résonance destructrice"
-    },
-    4: {
-      achat: [
-        { name: "Vitesse de déplacement augmentée après élimination", cout: 11000, cat: "Mobilité" }
-      ],
-      pouvoir: null
-    },
-    5: {
-      achat: [
-        { name: "Tir double orbe (soin/dégâts)", cout: 13000, cat: "Arme" }
-      ],
-      pouvoir: "Amplificateur à polarité inversée"
-    },
-    6: {
-      achat: [
-        { name: "Cooldown de l'onde perturbatrice réduit", cout: 15000, cat: "Capacité" }
-      ],
-      pouvoir: null
-    },
-    7: {
-      achat: [
-        { name: "Cataclysme énergétique (ultime dégâts max)", cout: "Variable", cat: "Capacité" }
-      ],
-      pouvoir: "Apogée"
-    }
-  }
-},
-  moira: {
-    heal: {
-      1: {
-        achat: [
-          { name: "Soin ciblé amélioré (Enhanced Healing)", cout: 1200, cat: "Capacité" },
-          { name: "Barrière vitale (Life Barrier)", cout: 1500, cat: "Survie" },
-          { name: "Réduction cooldown soin (Healing Cooldown Reduction)", cout: 1000, cat: "Capacité" }
-        ],
-        pouvoir: "Coalescence"
-      },
-      2: {
-        achat: [
-          { name: "Drain d'énergie (Energy Drain Boost)", cout: 3500, cat: "Capacité" },
-          { name: "Résistance spirituelle (Spiritual Fortitude)", cout: 4000, cat: "Survie" }
-        ],
-        pouvoir: null
-      },
-      3: {
-        achat: [
-          { name: "Puissance de soin améliorée (Healing Power Boost)", cout: 9000, cat: "Capacité" }
-        ],
-        pouvoir: "Fade"
-      },
-      4: {
-        achat: [
-          { name: "Réduction recharge dégâts (Damage Cooldown Reduction)", cout: 11000, cat: "Capacité" }
-        ],
-        pouvoir: null
-      },
-      5: {
-        achat: [
-          { name: "Drain de vie amélioré (Improved Life Drain)", cout: 13000, cat: "Capacité" }
-        ],
-        pouvoir: "Transcendence"
-      },
-      6: {
-        achat: [
-          { name: "Barrière ultime (Ultimate Barrier)", cout: 15000, cat: "Survie" }
-        ],
-        pouvoir: null
-      },
-      7: {
-        achat: [
-          { name: "Amplification ultime (Ultimate Amplification)", cout: "Variable", cat: "Capacité" }
-        ],
-        pouvoir: "Coalescence Plus"
-      }
-    },
-    damage: {
-      1: {
-        achat: [
-          { name: "Dégâts du rayon (Beam Damage Boost)", cout: 1500, cat: "Arme" },
-          { name: "Recharge plus rapide (Faster Orb Recharge)", cout: 2000, cat: "Capacité" }
-        ],
-        pouvoir: "Coalescence"
-      },
-      2: {
-        achat: [
-          { name: "Orbe destructeur (Destructive Orb)", cout: 3500, cat: "Capacité" },
-          { name: "Résistance accrue (Increased Resistance)", cout: 4000, cat: "Survie" }
-        ],
-        pouvoir: null
-      },
-      3: {
-        achat: [
-          { name: "Puissance d'attaque (Attack Power Boost)", cout: 9000, cat: "Capacité" }
-        ],
-        pouvoir: "Fade"
-      },
-      4: {
-        achat: [
-          { name: "Réduction temps recharge orb (Orb Cooldown Reduction)", cout: 11000, cat: "Capacité" }
-        ],
-        pouvoir: null
-      },
-      5: {
-        achat: [
-          { name: "Orbe explosif (Explosive Orb)", cout: 13000, cat: "Arme" }
-        ],
-        pouvoir: "Transcendence"
-      },
-      6: {
-        achat: [
-          { name: "Dégâts supplémentaires (Extra Damage)", cout: 15000, cat: "Arme" }
-        ],
-        pouvoir: null
-      },
-      7: {
-        achat: [
-          { name: "Amplification ultime dégâts (Ultimate Damage Amplification)", cout: "Variable", cat: "Capacité" }
-        ],
-        pouvoir: "Coalescence Plus"
-      }
-    }
-  }
-};
 
     function generateRecommendations() {
-      const hero = document.getElementById("hero").value;
-      const style = document.getElementById("style").value;
-      const recoDiv = document.getElementById("recommendation-output");
-      const data = strategies[hero][style];
-      recoDiv.innerHTML = `<h2>Stratégie ${style === "heal" ? "Soin" : "Dégâts"} pour ${hero.charAt(0).toUpperCase() + hero.slice(1)}</h2>`;
+      const role = document.getElementById("roleSelect").value;
+      const hero = document.getElementById("heroSelect").value;
+      const style = document.getElementById("styleSelect").value;
 
-      manches.forEach(manche => {
-        const points = parseInt(document.getElementById(`manche${manche}`).value || "0");
-        const step = data[manche];
+      const pointsParManche = [];
+      for (let i = 1; i <= 7; i++) {
+        pointsParManche.push(parseInt(document.getElementById("points" + i).value) || 0);
+      }
 
-        let block = `<div class="result-block"><strong>Manche ${manche} (${points} pts)</strong><ul>`;
+      const recommandations = [];
+      let pointsRestants = [...pointsParManche];
+      let competencesPossedees = [];
 
-        step.achat.forEach(achat => {
-          // On filtre les achats avec coût numérique uniquement
-          if (typeof achat.cout === "number") {
-            if (points >= achat.cout) {
-              // Achat accessible
-              block += `<li>${achat.name} — ${achat.cout} pts (${achat.cat})</li>`;
-            } else {
-              // Achat inaccessible => affiché en rouge
-              block += `<li class="inaccessible">${achat.name} — ${achat.cout} pts (${achat.cat})</li>`;
+      for (let manche = 1; manche <= 7; manche++) {
+        const options = strategies[hero]?.[style]?.[manche] || [];
+        let achatEffectue = false;
+
+        for (const comp of options) {
+          if (!isValidCost(comp.cout)) continue;
+          if (pointsRestants[manche - 1] >= comp.cout) {
+            // Si déjà 6 compétences, revendre la moins chère
+            if (competencesPossedees.length >= 6) {
+              const moinsChere = competencesPossedees.reduce((a, b) => a.cout < b.cout ? a : b);
+              pointsRestants[manche - 1] += moinsChere.cout;
+              competencesPossedees = competencesPossedees.filter(c => c !== moinsChere);
+              recommandations.push(`Manche ${manche} : Revente de "${moinsChere.nom}" pour ${moinsChere.cout} pts`);
             }
+
+            pointsRestants[manche - 1] -= comp.cout;
+            competencesPossedees.push(comp);
+            recommandations.push(`Manche ${manche} : Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts`);
+            achatEffectue = true;
+            break;
           }
-          // Si cout non numérique (ex: "Variable"), on ne l'affiche pas
-        });
-
-        block += "</ul>";
-
-        if (step.pouvoir) {
-          block += `<em>🧠 Pouvoir gratuit conseillé : <strong>${step.pouvoir}</strong></em>`;
         }
 
-        block += "</div>";
-        recoDiv.innerHTML += block;
-      });
+        if (!achatEffectue) {
+          recommandations.push(`Manche ${manche} : Aucun achat (points insuffisants ou compétences invalides)`);
+        }
+      }
+
+      document.getElementById("resultat").innerHTML = recommandations.join("<br>");
+      document.getElementById("heroImage").src = `images/${hero.toLowerCase()}.png`;
     }
   </script>
 </body>

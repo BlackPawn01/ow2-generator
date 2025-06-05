@@ -617,45 +617,6 @@ const strategies = {
         recoDiv.innerHTML += block;
       });
     }
-    <script>
-  function generateRecommendations() {
-    const hero = document.getElementById("hero").value;
-    const style = document.getElementById("style").value;
-    const outputDiv = document.getElementById("recommendation-output");
-    const heroData = strategies[hero][style];
-
-    let resultHTML = `<h2>Recommandations pour ${hero.charAt(0).toUpperCase() + hero.slice(1)} (${style === "heal" ? "soins" : "dégâts"})</h2>`;
-
-    for (let manche = 1; manche <= 7; manche++) {
-      const pointsInput = document.getElementById(`manche${manche}`);
-      const points = parseInt(pointsInput.value) || 0;
-      const mancheData = heroData[manche];
-
-      resultHTML += `<div class="result-block"><strong>Manche ${manche}</strong> – <em>${points} points disponibles</em><ul>`;
-
-      if (mancheData.achat && mancheData.achat.length > 0) {
-        for (const item of mancheData.achat) {
-          const cout = item.cout === "Variable" ? "Coût variable" : `${item.cout} pts`;
-          const classe = (item.cout !== "Variable" && item.cout > points) ? "inaccessible" : "";
-          resultHTML += `<li class="${classe}">${item.name} – ${cout} [${item.cat}]</li>`;
-        }
-      } else {
-        resultHTML += `<li>Aucun achat recommandé</li>`;
-      }
-
-      resultHTML += "</ul>";
-
-      if (mancheData.pouvoir) {
-        resultHTML += `<p><strong>Pouvoir spécial :</strong> ${mancheData.pouvoir}</p>`;
-      }
-
-      resultHTML += "</div>";
-    }
-
-    outputDiv.innerHTML = resultHTML;
-  }
-</script>
-
   </script>
 </body>
 </html>

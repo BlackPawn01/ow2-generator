@@ -72,44 +72,27 @@
   <img id="heroImage" src="" alt="Héros sélectionné" />
 
   <script>
-const strategies = {
-  Mercy: {
-    heal: {
-      powers: {
-        1: "Serenity",
-        3: "Threads of Fate",
-        5: "Renaissance",
-        7: "Crepuscular Circle"
-      },
-      purchases: {
-        1: ["Amplification de soins (1500)", "Portée de Caducée (1000)"], // total 2500
-        2: ["Régénération (4000)"], // total 4000
-        3: ["Portée accrue (1000)"], // manche faible
-        4: ["Ravitaillement rapide (5000)"], // total 5000
-        5: ["Soins d'urgence (4000)"], // remplacement possible si 6 dépassé
-        6: ["Résistance (3000)"], // remplacer Portée accrue si besoin
-        7: [] // pas d'achat, pouvoir gratuit
+    const strategies = {
+      Mercy: {
+        heal: {
+          1: [{ nom: "Soin rapide", cout: 1000, categorie: "Capacité" }],
+          2: [{ nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" }],
+          3: [{ nom: "Amplification de rayon", cout: 5000, categorie: "Arme" }],
+          4: [{ nom: "Auto-régénération améliorée", cout: 6000, categorie: "Survie" }],
+          5: [{ nom: "Résurrection rapide", cout: 9000, categorie: "Capacité" }],
+          6: [],
+          7: []
+        },
+        damage: {
+          1: [{ nom: "Pistolet boosté", cout: 1000, categorie: "Arme" }],
+          2: [{ nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" }],
+          3: [{ nom: "Cadence accrue", cout: 5000, categorie: "Arme" }],
+          4: [{ nom: "Combo tir secondaire", cout: 6000, categorie: "Capacité" }],
+          5: [{ nom: "Dernière chance", cout: 9000, categorie: "Survie" }],
+          6: [],
+          7: []
+        }
       }
-    },
-    damage: {
-      powers: {
-        1: "Bulle de dégâts",
-        3: "Frappe puissante",
-        5: "Explosion ciblée",
-        7: "Cadence critique"
-      },
-      purchases: {
-        1: ["Rayon offensif (3500)"], // plein budget
-        2: ["Vitesse d’attaque (4000)"],
-        3: ["Visée auto secondaire (1000)"],
-        4: ["Frappe rapide (5000)"],
-        5: ["Perforation (4000)"], // limite 6 compétences
-        6: ["Mobilité améliorée (3000)"], // peut remplacer une plus faible
-        7: [] // pouvoir gratuit
-      }
-    }
-  // ... autres héros
-};
       // Ajouter d'autres héros ici avec leurs catégories corrigées
     };
 

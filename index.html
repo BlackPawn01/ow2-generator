@@ -19,10 +19,17 @@
       padding: 10px;
       border: 1px solid #45a29e;
     }
-    img {
-      float: right;
-      height: 200px;
-      width: 100px;
+    .inputs-container {
+      display: flex;
+      align-items: flex-start;
+    }
+    .points-section {
+      flex: 1;
+    }
+    #heroImage {
+      height: 300px;
+      width: auto;
+      margin-left: 20px;
       object-fit: contain;
     }
   </style>
@@ -38,7 +45,7 @@
   </select>
 
   <label for="heroSelect">Héros :</label>
-  <select id="heroSelect">
+  <select id="heroSelect" onchange="updateHeroImage()">
     <option value="Mercy">Mercy</option>
     <option value="Kiriko">Kiriko</option>
     <option value="Moira">Moira</option>
@@ -53,61 +60,55 @@
     <option value="damage">Priorité dégâts</option>
   </select>
 
-  <div>
-    <h3>Points disponibles par manche :</h3>
-    <div id="pointsInputs">
+  <div class="inputs-container">
+    <div class="points-section">
+      <h3>Points disponibles par manche :</h3>
       <label>Manche 1 : <input type="number" id="points1" value="3500" min="3500" /></label><br />
       <label>Manche 2 : <input type="number" id="points2" value="6000" min="6000" /></label><br />
-      <label>Manche 3 : <input type="number" id="points3" value="12000" min="12000" /></label><br />
-      <label>Manche 4 : <input type="number" id="points4" value="18000" min="18000" /></label><br />
-      <label>Manche 5 : <input type="number" id="points5" value="24000" min="24000" /></label><br />
-      <label>Manche 6 : <input type="number" id="points6" value="30000" min="30000" /></label><br />
-      <label>Manche 7 : <input type="number" id="points7" value="36000" min="36000" /></label><br />
+      <label>Manche 3 : <input type="number" id="points3" value="12000" min="6000" /></label><br />
+      <label>Manche 4 : <input type="number" id="points4" value="15000" min="6000" /></label><br />
+      <label>Manche 5 : <input type="number" id="points5" value="15000" min="6000" /></label><br />
+      <label>Manche 6 : <input type="number" id="points6" value="15000" min="6000" /></label><br />
+      <label>Manche 7 : <input type="number" id="points7" value="15000" min="6000" /></label><br />
     </div>
+    <img id="heroImage" src="images/mercy.png" alt="Image du héros" />
   </div>
 
   <button onclick="generateRecommendations()">Générer les recommandations</button>
-
   <div id="resultat" class="recommandation"></div>
-  <img id="heroImage" src="" alt="Héros sélectionné" />
 
   <script>
     const strategies = {
       Mercy: {
         heal: {
-          1: [{ nom: "Soin rapide", cout: 1000, categorie: "Capacité" }],
+          1: [{ nom: "Soin ciblé", cout: 1500, categorie: "Capacité" }, { nom: "Économie de soin", cout: 1000, categorie: "Capacité" }],
           2: [{ nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" }],
           3: [{ nom: "Amplification de rayon", cout: 5000, categorie: "Arme" }],
           4: [{ nom: "Auto-régénération améliorée", cout: 6000, categorie: "Survie" }],
           5: [{ nom: "Résurrection rapide", cout: 9000, categorie: "Capacité" }],
-          6: [],
-          7: []
-        },
-        damage: {
-          1: [{ nom: "Pistolet boosté", cout: 1000, categorie: "Arme" }],
-          2: [{ nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" }],
-          3: [{ nom: "Cadence accrue", cout: 5000, categorie: "Arme" }],
-          4: [{ nom: "Combo tir secondaire", cout: 6000, categorie: "Capacité" }],
-          5: [{ nom: "Dernière chance", cout: 9000, categorie: "Survie" }],
-          6: [],
-          7: []
+          6: [{ nom: "Récupération ultime", cout: 9000, categorie: "Survie" }],
+          7: [{ nom: "Chapelet de soin", cout: 12000, categorie: "Capacité" }]
         }
+        // damage: {} (sera ajouté ensuite)
       }
-      // Ajouter d'autres héros ici avec leurs catégories corrigées
+      // Autres héros à compléter
     };
 
     function isValidCost(cout) {
       return (cout <= 1500 || (cout >= 3750 && cout <= 6000) || cout >= 9000);
     }
 
+    function updateHeroImage() {
+      const hero = document.getElementById("heroSelect").value;
+      document.getElementById("heroImage").src = `images/${hero.toLowerCase()}.png`;
+    }
+
     function generateRecommendations() {
-      const role = document.getElementById("roleSelect").value;
       const hero = document.getElementById("heroSelect").value;
       const style = document.getElementById("styleSelect").value;
-
       const pointsParManche = [];
       for (let i = 1; i <= 7; i++) {
-        pointsParManche.push(parseInt(document.getElementById("points" + i).value) || 0);
+        pointsParManche.push(parseInt(document.getElementById(`points${i}`).value) || 0);
       }
 
       const recommandations = [];
@@ -121,30 +122,31 @@
         for (const comp of options) {
           if (!isValidCost(comp.cout)) continue;
           if (pointsRestants[manche - 1] >= comp.cout) {
-            // Si déjà 6 compétences, revendre la moins chère
             if (competencesPossedees.length >= 6) {
               const moinsChere = competencesPossedees.reduce((a, b) => a.cout < b.cout ? a : b);
               pointsRestants[manche - 1] += moinsChere.cout;
               competencesPossedees = competencesPossedees.filter(c => c !== moinsChere);
-              recommandations.push(`Manche ${manche} : Revente de "${moinsChere.nom}" pour ${moinsChere.cout} pts`);
+              recommandations.push(`Manche ${manche} : 🔄 Revente de "${moinsChere.nom}" (+${moinsChere.cout} pts)`);
             }
 
             pointsRestants[manche - 1] -= comp.cout;
             competencesPossedees.push(comp);
-            recommandations.push(`Manche ${manche} : Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts`);
+            recommandations.push(`Manche ${manche} : ✅ Achat de "${comp.nom}" [${comp.categorie}] pour ${comp.cout} pts`);
             achatEffectue = true;
             break;
           }
         }
 
         if (!achatEffectue) {
-          recommandations.push(`Manche ${manche} : Aucun achat (points insuffisants ou compétences invalides)`);
+          recommandations.push(`Manche ${manche} : ❌ Aucun achat possible (budget insuffisant ou compétences invalides)`);
         }
       }
 
       document.getElementById("resultat").innerHTML = recommandations.join("<br>");
-      document.getElementById("heroImage").src = `images/${hero.toLowerCase()}.png`;
     }
+
+    // Chargement initial
+    window.onload = updateHeroImage;
   </script>
 </body>
 </html>

@@ -9,6 +9,10 @@
       color: #c5c6c7;
       font-family: Arial, sans-serif;
       padding: 20px;
+      display: flex;
+    }
+    .main-content {
+      flex: 1;
     }
     select, input, button {
       margin: 5px;
@@ -19,79 +23,116 @@
       padding: 10px;
       border: 1px solid #45a29e;
     }
-    .inputs-container {
-      display: flex;
-      align-items: flex-start;
+    .hero-image {
+      margin-left: 40px;
+      margin-top: 30px;
     }
-    .points-section {
-      flex: 1;
-    }
-    #heroImage {
-      height: 300px;
+    .hero-image img {
+      height: 320px;
       width: auto;
-      margin-left: 20px;
       object-fit: contain;
     }
   </style>
 </head>
 <body>
-  <h1>OW2 Stadium - Générateur de stratégie</h1>
+  <div class="main-content">
+    <h1>OW2 Stadium - Générateur de stratégie</h1>
 
-  <label for="roleSelect">Rôle :</label>
-  <select id="roleSelect">
-    <option value="soutien">Soutien</option>
-    <option value="dps" disabled>DPS (à venir)</option>
-    <option value="tank" disabled>Tank (à venir)</option>
-  </select>
+    <label for="roleSelect">Rôle :</label>
+    <select id="roleSelect">
+      <option value="soutien">Soutien</option>
+      <option value="dps" disabled>DPS (à venir)</option>
+      <option value="tank" disabled>Tank (à venir)</option>
+    </select>
 
-  <label for="heroSelect">Héros :</label>
-  <select id="heroSelect" onchange="updateHeroImage()">
-    <option value="Mercy">Mercy</option>
-    <option value="Kiriko">Kiriko</option>
-    <option value="Moira">Moira</option>
-    <option value="Lucio">Lucio</option>
-    <option value="Ana">Ana</option>
-    <option value="Juno">Juno</option>
-  </select>
+    <label for="heroSelect">Héros :</label>
+    <select id="heroSelect" onchange="updateHeroImage()">
+      <option value="Mercy">Mercy</option>
+      <option value="Kiriko">Kiriko</option>
+      <option value="Moira">Moira</option>
+      <option value="Lucio">Lucio</option>
+      <option value="Ana">Ana</option>
+      <option value="Juno">Juno</option>
+    </select>
 
-  <label for="styleSelect">Style de jeu :</label>
-  <select id="styleSelect">
-    <option value="heal">Priorité soins</option>
-    <option value="damage">Priorité dégâts</option>
-  </select>
+    <label for="styleSelect">Style de jeu :</label>
+    <select id="styleSelect">
+      <option value="heal">Priorité soins</option>
+      <option value="damage">Priorité dégâts</option>
+    </select>
 
-  <div class="inputs-container">
-    <div class="points-section">
+    <div>
       <h3>Points disponibles par manche :</h3>
-      <label>Manche 1 : <input type="number" id="points1" value="3500" min="3500" /></label><br />
-      <label>Manche 2 : <input type="number" id="points2" value="6000" min="6000" /></label><br />
-      <label>Manche 3 : <input type="number" id="points3" value="12000" min="6000" /></label><br />
-      <label>Manche 4 : <input type="number" id="points4" value="15000" min="6000" /></label><br />
-      <label>Manche 5 : <input type="number" id="points5" value="15000" min="6000" /></label><br />
-      <label>Manche 6 : <input type="number" id="points6" value="15000" min="6000" /></label><br />
-      <label>Manche 7 : <input type="number" id="points7" value="15000" min="6000" /></label><br />
+      <div id="pointsInputs">
+        <label>Manche 1 : <input type="number" id="points1" value="3500" min="3500" /></label><br />
+        <label>Manche 2 : <input type="number" id="points2" value="6000" min="6000" /></label><br />
+        <label>Manche 3 : <input type="number" id="points3" value="12000" min="6000" /></label><br />
+        <label>Manche 4 : <input type="number" id="points4" value="15000" min="6000" /></label><br />
+        <label>Manche 5 : <input type="number" id="points5" value="15000" min="6000" /></label><br />
+        <label>Manche 6 : <input type="number" id="points6" value="15000" min="6000" /></label><br />
+        <label>Manche 7 : <input type="number" id="points7" value="15000" min="6000" /></label><br />
+      </div>
     </div>
-    <img id="heroImage" src="images/mercy.png" alt="Image du héros" />
+
+    <button onclick="generateRecommendations()">Générer les recommandations</button>
+
+    <div id="resultat" class="recommandation"></div>
   </div>
 
-  <button onclick="generateRecommendations()">Générer les recommandations</button>
-  <div id="resultat" class="recommandation"></div>
+  <div class="hero-image">
+    <img id="heroImage" src="images/mercy.png" alt="Héros sélectionné" />
+  </div>
 
   <script>
     const strategies = {
       Mercy: {
         heal: {
-          1: [{ nom: "Soin ciblé", cout: 1500, categorie: "Capacité" }, { nom: "Économie de soin", cout: 1000, categorie: "Capacité" }],
-          2: [{ nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" }],
-          3: [{ nom: "Amplification de rayon", cout: 5000, categorie: "Arme" }],
-          4: [{ nom: "Auto-régénération améliorée", cout: 6000, categorie: "Survie" }],
-          5: [{ nom: "Résurrection rapide", cout: 9000, categorie: "Capacité" }],
-          6: [{ nom: "Récupération ultime", cout: 9000, categorie: "Survie" }],
-          7: [{ nom: "Chapelet de soin", cout: 12000, categorie: "Capacité" }]
+          1: {
+            pouvoir: "Triage Unit",
+            options: [
+              { nom: "Soin rapide", cout: 1000, categorie: "Capacité" },
+              { nom: "Pack de soins amélioré", cout: 1500, categorie: "Survie" }
+            ]
+          },
+          2: {
+            pouvoir: null,
+            options: [
+              { nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" },
+              { nom: "Bouclier protecteur", cout: 5000, categorie: "Survie" }
+            ]
+          },
+          3: {
+            pouvoir: "Glass Extra Full",
+            options: [
+              { nom: "Amplification de rayon", cout: 9000, categorie: "Arme" }
+            ]
+          },
+          4: {
+            pouvoir: null,
+            options: [
+              { nom: "Auto-régénération améliorée", cout: 12000, categorie: "Survie" }
+            ]
+          },
+          5: {
+            pouvoir: "Equivalent Exchange",
+            options: [
+              { nom: "Résurrection rapide", cout: 13000, categorie: "Capacité" }
+            ]
+          },
+          6: {
+            pouvoir: null,
+            options: [
+              { nom: "Rétablissement critique", cout: 15000, categorie: "Survie" }
+            ]
+          },
+          7: {
+            pouvoir: "Crepuscular Circle",
+            options: [
+              { nom: "Champ de soin de zone", cout: 15000, categorie: "Capacité" }
+            ]
+          }
         }
-        // damage: {} (sera ajouté ensuite)
       }
-      // Autres héros à compléter
     };
 
     function isValidCost(cout) {
@@ -99,54 +140,60 @@
     }
 
     function updateHeroImage() {
-      const hero = document.getElementById("heroSelect").value;
-      document.getElementById("heroImage").src = `images/${hero.toLowerCase()}.png`;
+      const hero = document.getElementById("heroSelect").value.toLowerCase();
+      document.getElementById("heroImage").src = `images/${hero}.png`;
     }
 
     function generateRecommendations() {
       const hero = document.getElementById("heroSelect").value;
       const style = document.getElementById("styleSelect").value;
-      const pointsParManche = [];
+      const points = [];
       for (let i = 1; i <= 7; i++) {
-        pointsParManche.push(parseInt(document.getElementById(`points${i}`).value) || 0);
+        points.push(parseInt(document.getElementById("points" + i).value));
       }
 
+      const compPossedees = [];
       const recommandations = [];
-      let pointsRestants = [...pointsParManche];
-      let competencesPossedees = [];
+      const strat = strategies[hero][style];
 
       for (let manche = 1; manche <= 7; manche++) {
-        const options = strategies[hero]?.[style]?.[manche] || [];
+        let budget = points[manche - 1];
+        const mancheData = strat[manche];
+        let log = `Manche ${manche} (${budget} pts) :<br>`;
         let achatEffectue = false;
 
-        for (const comp of options) {
+        for (let comp of mancheData.options) {
           if (!isValidCost(comp.cout)) continue;
-          if (pointsRestants[manche - 1] >= comp.cout) {
-            if (competencesPossedees.length >= 6) {
-              const moinsChere = competencesPossedees.reduce((a, b) => a.cout < b.cout ? a : b);
-              pointsRestants[manche - 1] += moinsChere.cout;
-              competencesPossedees = competencesPossedees.filter(c => c !== moinsChere);
-              recommandations.push(`Manche ${manche} : 🔄 Revente de "${moinsChere.nom}" (+${moinsChere.cout} pts)`);
+          if (budget >= comp.cout) {
+            if (compPossedees.length >= 6) {
+              const moinsChere = compPossedees.reduce((a, b) => a.cout < b.cout ? a : b);
+              budget += moinsChere.cout;
+              recommandations.push(`↪ Revente de "${moinsChere.nom}" (${moinsChere.categorie}) pour ${moinsChere.cout} pts`);
+              compPossedees.splice(compPossedees.indexOf(moinsChere), 1);
             }
-
-            pointsRestants[manche - 1] -= comp.cout;
-            competencesPossedees.push(comp);
-            recommandations.push(`Manche ${manche} : ✅ Achat de "${comp.nom}" [${comp.categorie}] pour ${comp.cout} pts`);
+            budget -= comp.cout;
+            compPossedees.push(comp);
+            log += `✅ Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts<br>`;
             achatEffectue = true;
             break;
           }
         }
 
         if (!achatEffectue) {
-          recommandations.push(`Manche ${manche} : ❌ Aucun achat possible (budget insuffisant ou compétences invalides)`);
+          log += `❌ Aucun achat possible<br>`;
         }
+
+        if (mancheData.pouvoir) {
+          log += `🧠 Pouvoir recommandé : <strong>${mancheData.pouvoir}</strong><br>`;
+        }
+
+        recommandations.push(log);
       }
 
-      document.getElementById("resultat").innerHTML = recommandations.join("<br>");
+      document.getElementById("resultat").innerHTML = recommandations.join("<br><br>");
     }
 
-    // Chargement initial
-    window.onload = updateHeroImage;
+    updateHeroImage();
   </script>
 </body>
 </html>

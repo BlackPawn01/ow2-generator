@@ -48,11 +48,6 @@
     <label for="heroSelect">Héros :</label>
     <select id="heroSelect" onchange="updateHeroImage()">
       <option value="Mercy">Mercy</option>
-      <option value="Kiriko">Kiriko</option>
-      <option value="Moira">Moira</option>
-      <option value="Lucio">Lucio</option>
-      <option value="Ana">Ana</option>
-      <option value="Juno">Juno</option>
     </select>
 
     <label for="styleSelect">Style de jeu :</label>
@@ -98,13 +93,15 @@
             pouvoir: null,
             options: [
               { nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" },
-              { nom: "Bouclier protecteur", cout: 5000, categorie: "Survie" }
+              { nom: "Bouclier protecteur", cout: 5000, categorie: "Survie" },
+              { nom: "Soin rapide", cout: 1000, categorie: "Capacité" }
             ]
           },
           3: {
             pouvoir: "Glass Extra Full",
             options: [
-              { nom: "Amplification de rayon", cout: 9000, categorie: "Arme" }
+              { nom: "Amplification de rayon", cout: 9000, categorie: "Arme" },
+              { nom: "Pack de soins amélioré", cout: 1500, categorie: "Survie" }
             ]
           },
           4: {
@@ -131,56 +128,8 @@
               { nom: "Champ de soin de zone", cout: 15000, categorie: "Capacité" }
             ]
           }
-        },
-        damage: {
-  1: {
-    pouvoir: "Battle Medic",
-    options: [
-      { nom: "Cadence de tir accrue", cout: 1500, categorie: "Arme" },
-      { nom: "Tir chargé rapide", cout: 1500, categorie: "Arme" },
-      { nom: "Pistolet boosté", cout: 1000, categorie: "Arme" }
-    ]
-  },
-  2: {
-    pouvoir: null,
-    options: [
-      { nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" },
-      { nom: "Soin en tir", cout: 5000, categorie: "Capacité" }
-    ]
-  },
-  3: {
-    pouvoir: "Distortion",
-    options: [
-      { nom: "Boost de dégâts", cout: 9000, categorie: "Capacité" }
-    ]
-  },
-  4: {
-    pouvoir: null,
-    options: [
-      { nom: "Combo tir secondaire", cout: 12000, categorie: "Capacité" }
-    ]
-  },
-  5: {
-    pouvoir: "Equivalent Exchange",
-    options: [
-      { nom: "Dernière chance", cout: 13000, categorie: "Survie" }
-    ]
-  },
-  6: {
-    pouvoir: null,
-    options: [
-      { nom: "Recharge pistolet optimisée", cout: 15000, categorie: "Arme" }
-    ]
-  },
-  7: {
-    pouvoir: "Crepuscular Circle",
-    options: [
-      { nom: "Explosion critique", cout: 15000, categorie: "Arme" }
-    ]
-  }
-}
+        }
       }
-    
     };
 
     function isValidCost(cout) {
@@ -208,28 +157,27 @@
         let budget = points[manche - 1];
         const mancheData = strat[manche];
         let log = `Manche ${manche} (${budget} pts) :<br>`;
-        let achatEffectue = false;
+        const achats = [];
 
-        for (let comp of mancheData.options) {
-          if (!isValidCost(comp.cout)) continue;
+        // Trier les compétences par coût descendant
+        const triOptions = [...mancheData.options].filter(o => isValidCost(o.cout)).sort((a, b) => b.cout - a.cout);
+
+        for (let comp of triOptions) {
           if (budget >= comp.cout) {
             if (compPossedees.length >= 6) {
               const moinsChere = compPossedees.reduce((a, b) => a.cout < b.cout ? a : b);
               budget += moinsChere.cout;
-              recommandations.push(`↪ Revente de "${moinsChere.nom}" (${moinsChere.categorie}) pour ${moinsChere.cout} pts`);
               compPossedees.splice(compPossedees.indexOf(moinsChere), 1);
+              log += `↪ Revente de "${moinsChere.nom}" (${moinsChere.categorie}) pour ${moinsChere.cout} pts<br>`;
             }
             budget -= comp.cout;
             compPossedees.push(comp);
-            log += `✅ Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts<br>`;
-            achatEffectue = true;
-            break;
+            achats.push(`✅ Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts`);
           }
         }
 
-        if (!achatEffectue) {
-          log += `❌ Aucun achat possible<br>`;
-        }
+        if (achats.length === 0) log += `❌ Aucun achat possible<br>`;
+        else log += achats.join("<br>") + "<br>";
 
         if (mancheData.pouvoir) {
           log += `🧠 Pouvoir recommandé : <strong>${mancheData.pouvoir}</strong><br>`;

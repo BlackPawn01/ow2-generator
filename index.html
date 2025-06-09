@@ -32,6 +32,12 @@
       width: auto;
       object-fit: contain;
     }
+    .info-message {
+      font-style: italic;
+      font-size: 0.9em;
+      color: #aaaaaa;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -58,6 +64,7 @@
 
     <div>
       <h3>Points disponibles par manche :</h3>
+      <div class="info-message">Renseigner par manche le montant de points globaux disponibles.</div>
       <div id="pointsInputs">
         <label>Manche 1 : <input type="number" id="points1" value="3500" min="3500" /></label><br />
         <label>Manche 2 : <input type="number" id="points2" value="6000" min="6000" /></label><br />
@@ -86,22 +93,22 @@
             pouvoir: "Triage Unit",
             options: [
               { nom: "Soin rapide", cout: 1000, categorie: "Capacité" },
-              { nom: "Pack de soins amélioré", cout: 1500, categorie: "Survie" }
+              { nom: "Pack de soins amélioré", cout: 1500, categorie: "Survie" },
+              { nom: "Survie de proximité", cout: 1000, categorie: "Survie" }
             ]
           },
           2: {
             pouvoir: null,
             options: [
               { nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" },
-              { nom: "Bouclier protecteur", cout: 5000, categorie: "Survie" },
-              { nom: "Soin rapide", cout: 1000, categorie: "Capacité" }
+              { nom: "Bouclier protecteur", cout: 5000, categorie: "Survie" }
             ]
           },
           3: {
             pouvoir: "Glass Extra Full",
             options: [
               { nom: "Amplification de rayon", cout: 9000, categorie: "Arme" },
-              { nom: "Pack de soins amélioré", cout: 1500, categorie: "Survie" }
+              { nom: "Tir auto-charge", cout: 3750, categorie: "Arme" }
             ]
           },
           4: {
@@ -157,22 +164,25 @@
         let budget = points[manche - 1];
         const mancheData = strat[manche];
         let log = `Manche ${manche} (${budget} pts) :<br>`;
-        const achats = [];
+        let achats = [];
 
-        // Trier les compétences par coût descendant
-        const triOptions = [...mancheData.options].filter(o => isValidCost(o.cout)).sort((a, b) => b.cout - a.cout);
+        const disponibles = [...mancheData.options].filter(o => isValidCost(o.cout)).sort((a, b) => b.cout - a.cout);
 
-        for (let comp of triOptions) {
-          if (budget >= comp.cout) {
-            if (compPossedees.length >= 6) {
-              const moinsChere = compPossedees.reduce((a, b) => a.cout < b.cout ? a : b);
-              budget += moinsChere.cout;
-              compPossedees.splice(compPossedees.indexOf(moinsChere), 1);
-              log += `↪ Revente de "${moinsChere.nom}" (${moinsChere.categorie}) pour ${moinsChere.cout} pts<br>`;
-            }
+        for (let comp of disponibles) {
+          if (budget >= comp.cout && compPossedees.length < 6) {
             budget -= comp.cout;
             compPossedees.push(comp);
             achats.push(`✅ Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts`);
+          } else if (budget >= comp.cout && compPossedees.length >= 6) {
+            const moinsChere = compPossedees.reduce((a, b) => a.cout < b.cout ? a : b);
+            if (moinsChere.cout < comp.cout) {
+              budget += moinsChere.cout;
+              compPossedees.splice(compPossedees.indexOf(moinsChere), 1);
+              log += `↪ Revente de "${moinsChere.nom}" (${moinsChere.categorie}) pour ${moinsChere.cout} pts<br>`;
+              budget -= comp.cout;
+              compPossedees.push(comp);
+              achats.push(`✅ Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts`);
+            }
           }
         }
 

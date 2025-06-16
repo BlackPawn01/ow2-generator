@@ -55,7 +55,11 @@
     <select id="heroSelect" onchange="updateHeroImage()">
       <option value="ange">ange</option>
       <option value="moira">moira</option>
-      <!-- Ajouter ici d'autres héros (ex: Kiriko, Moira, Ana, etc. en minuscule) -->
+<!-- ➕ Pour ajouter un héros :
+   1. Ajoute une <option value="NomHero">Nom affiché</option> dans #heroSelect
+   2. Crée une image "nomhero.png" en minuscule dans le dossier /images
+   3. Ajoute un bloc strategies["NomHero"] dans le script avec les styles : heal, damage, heal_noult, damage_noult
+-->
     </select>
 
     <label for="styleSelect">Style de jeu :</label>
@@ -91,7 +95,7 @@
 
   <script>
     const strategies = {
-      Ange: {
+      ange: {
           heal: {
     1: {
       achat: [
@@ -290,7 +294,7 @@ damage_noult: {
   }
       }
 },
-Moira: {
+moira: {
   heal: {
     1: {
       achat: [
@@ -510,8 +514,11 @@ damage_noult: {
 
       const compPossedees = [];
       const recommandations = [];
-      const strat = strategies[hero][style];
-
+      const strat = strategies[hero]?.[style];
+      if (!strat) {
+  document.getElementById("resultat").innerHTML = `❌ Aucune stratégie définie pour ${hero} en style "${style}".`;
+  return;
+}
       for (let manche = 1; manche <= 7; manche++) {
         let budget = points[manche - 1];
         const mancheData = strat[manche];

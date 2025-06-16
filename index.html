@@ -54,12 +54,19 @@
     <label for="heroSelect">Héros :</label>
     <select id="heroSelect" onchange="updateHeroImage()">
       <option value="Mercy">Mercy</option>
+      <option value="Moira">Moira</option>
+      <option value="Ana">Ana</option>
+      <option value="Lucio">Lucio</option>
+      <option value="Kiriko">Kiriko</option>
+      <!-- Ajouter ici d'autres héros (ex: Kiriko, Moira, Ana, etc.) -->
     </select>
 
     <label for="styleSelect">Style de jeu :</label>
     <select id="styleSelect">
       <option value="heal">Priorité soins</option>
       <option value="damage">Priorité dégâts</option>
+      <option value="heal_noult">Soin sans utiliser l'ultime</option>
+      <option value="damage_noult">Dégâts sans utiliser l'ultime</option>
     </select>
 
     <div>
@@ -88,56 +95,205 @@
   <script>
     const strategies = {
       Mercy: {
-        heal: {
-          1: {
-            pouvoir: "Triage Unit",
-            options: [
-              { nom: "Soin rapide", cout: 1000, categorie: "Capacité" },
-              { nom: "Pack de soins amélioré", cout: 1500, categorie: "Survie" },
-              { nom: "Survie de proximité", cout: 1000, categorie: "Survie" }
-            ]
-          },
-          2: {
-            pouvoir: null,
-            options: [
-              { nom: "Déploiement d’Ange gardien", cout: 4000, categorie: "Mobilité" },
-              { nom: "Bouclier protecteur", cout: 5000, categorie: "Survie" }
-            ]
-          },
-          3: {
-            pouvoir: "Glass Extra Full",
-            options: [
-              { nom: "Amplification de rayon", cout: 9000, categorie: "Arme" },
-              { nom: "Tir auto-charge", cout: 3750, categorie: "Arme" }
-            ]
-          },
-          4: {
-            pouvoir: null,
-            options: [
-              { nom: "Auto-régénération améliorée", cout: 12000, categorie: "Survie" }
-            ]
-          },
-          5: {
-            pouvoir: "Equivalent Exchange",
-            options: [
-              { nom: "Résurrection rapide", cout: 13000, categorie: "Capacité" }
-            ]
-          },
-          6: {
-            pouvoir: null,
-            options: [
-              { nom: "Rétablissement critique", cout: 15000, categorie: "Survie" }
-            ]
-          },
-          7: {
-            pouvoir: "Crepuscular Circle",
-            options: [
-              { nom: "Champ de soin de zone", cout: 15000, categorie: "Capacité" }
-            ]
-          }
-        }
+          heal: {
+    1: {
+      achat: [
+        { name: "Power Playbook", cout: 1000, cat: "Capacité" }, // +10% ability power
+        { name: "Shady Spectacles", cout: 1000, cat: "Capacité" }, // 10% ability lifesteal
+        { name: "Packs de soin améliorés", cout: 1500, cat: "Survie" } // sustain perso
+      ],
+      pouvoir: "Triage Unit" // +30% heal <50% HP
+    },
+    2: {
+      achat: [
+        { name: "Long-Distance Wings", cout: 4000, cat: "Spécifique" }, // +10% healing, portée Guardian Angel
+        { name: "Energized Bracers", cout: 4000, cat: "Capacité" }, // +10% heal, +lifesteal
+        { name: "Vital-e-tee", cout: 4000, cat: "Survie" } // conversion PV en armure
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Biotech Maximizer", cout: 10000, cat: "Capacité" } // réduction cooldown en fonction du nombre d’alliés
+      ],
+      pouvoir: "Glass Extra Full" // soin converti en overhealth
+    },
+    4: {
+      achat: [
+        { name: "Martian Mender", cout: 10000, cat: "Survie" }, // régène 3% PV/s
+        { name: "Angeleisure Wear", cout: 4000, cat: "Spécifique" } // régène sous Angelic Descent ou Guardian Angel
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "Caduceus Ex", cout: 10000, cat: "Spécifique" }, // +33% portée Caducée
+        { name: "Resurrection Rangefinder", cout: 10000, cat: "Spécifique" } // cooldown rez + portée
+      ],
+      pouvoir: "Equivalent Exchange" // 3 rez par manche, +cast rapide
+    },
+    6: {
+      achat: [
+        { name: "Chain Evoker", cout: 10000, cat: "Spécifique" }, // +5% Caducée heal/dmg boost, +15% ult gain
+        { name: "Mark of the Kitsune", cout: 11000, cat: "Capacité" } // +25 soin après capacité
+      ],
+      pouvoir: null
+    },
+    7: {
+      achat: [
+        { name: "Iridescent Iris", cout: 11000, cat: "Capacité" }, // +20% heal, cooldown réduits après ult
+        { name: "Crepuscular Circle", cout: "Gratuit", cat: "Pouvoir" }
+      ],
+      pouvoir: "Crepuscular Circle" // soin/dmg boost autour de toi pendant Valkyrie
+    }
+  },
+        damage: {
+    1: {
+      achat: [
+        { name: "Weapon Grease", cout: 1000, cat: "Arme" }, // +5% vitesse d'attaque
+        { name: "Plasma Converter", cout: 1000, cat: "Arme" }, // +10% vol de vie sur arme
+        { name: "Ammo Reserves", cout: 1500, cat: "Arme" } // +20% munitions max
+      ],
+      pouvoir: "Battle Medic" // cadence augmentée tant que tu boost/heal un allié
+    },
+    2: {
+      achat: [
+        { name: "Aftermarket Firing Pin", cout: 3750, cat: "Arme" }, // +10% cadence, +5% vitesse déplacement
+        { name: "Vital-e-tee", cout: 4000, cat: "Survie" } // +armure via conversion de PV
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Talon Modification Module", cout: 5500, cat: "Arme" }, // +15% puissance de l’arme
+        { name: "Shieldbuster", cout: 4000, cat: "Arme" } // +15% vitesse attaque après dégâts sur armure/boucliers
+      ],
+      pouvoir: "Distortion" // alliés boostés ont +20% vol de vie
+    },
+    4: {
+      achat: [
+        { name: "Celestial Clip", cout: 10000, cat: "Spécifique" }, // +10% puissance + chance de tir gratuit
+        { name: "Martian Mender", cout: 10000, cat: "Survie" } // régène 3% PV/s
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "The Closer", cout: 13000, cat: "Arme" } // +20% dégâts + crit reveal
+      ],
+      pouvoir: "Equivalent Exchange" // rez x3 / cast rapide
+    },
+    6: {
+      achat: [
+        { name: "Weapon Jammer", cout: 10000, cat: "Arme" }, // vol de vitesse d’attaque + armure
+        { name: "Chain Evoker", cout: 10000, cat: "Spécifique" } // +5% boost dmg Caducée + ult charge
+      ],
+      pouvoir: null
+    },
+    7: {
+      achat: [
+        { name: "Hardlight Accelerator", cout: 11000, cat: "Arme" }, // +5% weapon power stackable après compétence
+        { name: "Crepuscular Circle", cout: "Gratuit", cat: "Pouvoir" }
+      ],
+      pouvoir: "Crepuscular Circle" // pendant Valkyrie : soin + boost auto en zone
+    }
+  }
+,
+         heal_noult: {
+    1: {
+      achat: [
+        { name: "Power Playbook", cout: 1000, cat: "Capacité" },  // +10% capacité power
+        { name: "Shady Spectacles", cout: 1000, cat: "Capacité" },  // +10% lifesteal sur capacités
+        { name: "Plasma Converter", cout: 1000, cat: "Arme" }  // +10% lifesteal sur arme
+      ],
+      pouvoir: "Triage Unit" // Bonus de soins après Guardian Angel
+    },
+    2: {
+      achat: [
+        { name: "Angeleisure Wear", cout: 4000, cat: "Spécifique" }, // régène PV chaque seconde sous Guardian Angel ou Angelic Descent
+        { name: "Long-Distance Wings", cout: 4000, cat: "Spécifique" } // +10% capacité + portée Guardian Angel
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Energized Bracers", cout: 4000, cat: "Capacité" }, // +10% capacité + lifesteal
+        { name: "Vanadium Injection", cout: 10000, cat: "Survie" } // Boosts globaux si 100% d’ultime
+      ],
+      pouvoir: "Glass Extra Full" // Overheal passif si cible à 100% vie
+    },
+    4: {
+      achat: [
+        { name: "Biotech Maximizer", cout: 10000, cat: "Capacité" } // soin en zone + cooldown réduit
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "Mark of the Kitsune", cout: 11000, cat: "Capacité" } // prochaine capacité soigne 25 en plus
+      ],
+      pouvoir: "Equivalent Exchange"
+    },
+    6: {
+      achat: [
+        { name: "Iridescent Iris", cout: 11000, cat: "Capacité" }, // +20% capacité + CDR
+        { name: "Chain Evoker", cout: 10000, cat: "Spécifique" } // +5% boost Caduceus Staff + +15% ult charge (inutile ici mais stats bonus intéressants)
+      ],
+      pouvoir: null
+    },
+    7: {
+  achat: [
+    { name: "Champion’s Kit", cout: 13500, cat: "Capacité" }
+  ],
+  pouvoir: "Serenity"  // Passif utile en soin indirect sans dépendance à l'ultime
+},
+damage_noult: {
+  1: {
+    achat: [
+      { name: "Pistolet boosté", cout: 1000, cat: "Arme" },
+      { name: "Cadence accrue", cout: 1500, cat: "Arme" }
+    ],
+    pouvoir: "Battle Medic"
+  },
+  2: {
+    achat: [
+      { name: "Pré-achat pour Vanadium (ex: Déploiement GA)", cout: 4000, cat: "Mobilité" }
+    ],
+    pouvoir: null
+  },
+  3: {
+    achat: [
+      { name: "Injection de Vanadium", cout: 10000, cat: "Survie" }
+    ],
+    pouvoir: "Distortion"
+  },
+  4: {
+    achat: [
+      { name: "Bonus critique (ex: Suppressor ou The Closer)", cout: 11000, cat: "Arme" }
+    ],
+    pouvoir: null
+  },
+  5: {
+    achat: [
+      { name: "Weapon Jammer", cout: 10000, cat: "Arme" }
+    ],
+    pouvoir: "The Whambulance"
+  },
+  6: {
+    achat: [
+      { name: "Technoleech", cout: 9500, cat: "Arme" }
+    ],
+    pouvoir: null
+  },
+  7: {
+    achat: [
+      { name: "Final Crit/DPS boost", cout: 13500, cat: "Arme" }
+    ],
+    pouvoir: "Serenity"
+  }
       }
     };
+    // ... stratégies précédemment définies ...
 
     function isValidCost(cout) {
       return (cout <= 1500 || (cout >= 3750 && cout <= 6000) || cout >= 9000);
@@ -166,22 +322,22 @@
         let log = `Manche ${manche} (${budget} pts) :<br>`;
         let achats = [];
 
-        const disponibles = [...mancheData.options].filter(o => isValidCost(o.cout)).sort((a, b) => b.cout - a.cout);
+        const disponibles = [...mancheData.achat].filter(o => isValidCost(o.cout)).sort((a, b) => b.cout - a.cout);
 
         for (let comp of disponibles) {
           if (budget >= comp.cout && compPossedees.length < 6) {
             budget -= comp.cout;
             compPossedees.push(comp);
-            achats.push(`✅ Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts`);
+            achats.push(`✅ Achat de "${comp.name}" (${comp.cat}) pour ${comp.cout} pts`);
           } else if (budget >= comp.cout && compPossedees.length >= 6) {
             const moinsChere = compPossedees.reduce((a, b) => a.cout < b.cout ? a : b);
             if (moinsChere.cout < comp.cout) {
               budget += moinsChere.cout;
               compPossedees.splice(compPossedees.indexOf(moinsChere), 1);
-              log += `↪ Revente de "${moinsChere.nom}" (${moinsChere.categorie}) pour ${moinsChere.cout} pts<br>`;
+              log += `↪ Revente de "${moinsChere.name}" (${moinsChere.cat}) pour ${moinsChere.cout} pts<br>`;
               budget -= comp.cout;
               compPossedees.push(comp);
-              achats.push(`✅ Achat de "${comp.nom}" (${comp.categorie}) pour ${comp.cout} pts`);
+              achats.push(`✅ Achat de "${comp.name}" (${comp.cat}) pour ${comp.cout} pts`);
             }
           }
         }

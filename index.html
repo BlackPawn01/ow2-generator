@@ -558,7 +558,12 @@ damage_noult: {
       document.getElementById("resultat").innerHTML = recommandations.join("<br><br>");
     }
 
-    updateHeroImage();
+updateHeroImage();
+
+window.onload = () => {
+  updateHeroImage();
+};
+
   </script>
 </body>
 </html>

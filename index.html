@@ -291,6 +291,201 @@ damage_noult: {
   }
       }
 },
+Moira: {
+  heal: {
+    1: {
+      achat: [
+        { name: "Power Playbook", cout: 1000, cat: "Capacité" }, // +10% ability power
+        { name: "Shady Spectacles", cout: 1000, cat: "Capacité" }, // +10% lifesteal sur capacités
+        { name: "Bio-Needles", cout: 4000, cat: "Spécifique" } // +50% regen énergie sur soin secondaire
+      ],
+      pouvoir: "Precarious Potency" // +20% soins bonus sur la durée
+    },
+    2: {
+      achat: [
+        { name: "Smart Orbs", cout: 4000, cat: "Spécifique" }, // orbe plus lent = +efficacité
+        { name: "Vital-e-tee", cout: 4000, cat: "Survie" }, // conversion PV en armure
+        { name: "Abyss Boots", cout: 4000, cat: "Spécifique" } // mobilité + hauteur sur Fade
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Biotech Maximizer", cout: 10000, cat: "Capacité" } // réduit cooldown selon nbre alliés
+      ],
+      pouvoir: "Cross-orbal" // orbe bonus de type opposé (synergie heal)
+    },
+    4: {
+      achat: [
+        { name: "Martian Mender", cout: 10000, cat: "Survie" }, // regen passive
+        { name: "Alternative Energy", cout: 10000, cat: "Spécifique" } // +regen énergie biotique via Fade
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "Extendrils", cout: 11000, cat: "Spécifique" } // + portée des orbes = plus de cibles soignées
+      ],
+      pouvoir: "Voidhoppers" // Fade soigne et phase les alliés proches
+    },
+    6: {
+      achat: [
+        { name: "Coalegion", cout: 10000, cat: "Spécifique" }, // les alliés soignés par Coalescence infligent +15% dégâts
+        { name: "Mark of the Kitsune", cout: 11000, cat: "Capacité" } // +25 bonus soins après capacité
+      ],
+      pouvoir: null
+    },
+    7: {
+      achat: [
+        { name: "Champion’s Kit", cout: 13500, cat: "Capacité" } // +40% puissance capacité = soins max
+      ],
+      pouvoir: "Destruction’s Divide" // Coalescence mode soins uniquement, +25% effet
+    }
+  }
+   damage: {
+    1: {
+      achat: [
+        { name: "Bio-Needles", cout: 4000, cat: "Spécifique" }, // +regen énergie biotique pour spam le tir secondaire
+        { name: "Weapon Grease", cout: 1000, cat: "Arme" }, // +5% vitesse d’attaque
+        { name: "Power Playbook", cout: 1000, cat: "Capacité" } // +10% puissance capacité
+      ],
+      pouvoir: "Ethereal Excision" // Visée tête = +dégâts, vol de vie, regen énergie
+    },
+    2: {
+      achat: [
+        { name: "High Capacity Tubing", cout: 4000, cat: "Spécifique" }, // +50 énergie, +10% weapon power
+        { name: "Frenzy Amplifier", cout: 1500, cat: "Arme" } // kill = move + attack speed
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Cybervenom", cout: 10500, cat: "Capacité" } // +10% capacité, inflige heal reduction
+      ],
+      pouvoir: "Multiball" // 2 orbes bonus = pression + dégâts
+    },
+    4: {
+      achat: [
+        { name: "Levitation Shawl", cout: 4500, cat: "Spécifique" }, // Coalescence volante
+        { name: "Subatomic Splitter", cout: 11000, cat: "Spécifique" } // +10% weapon power + portée secondaire
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "The Closer", cout: 13000, cat: "Arme" } // +20% weapon power + dégâts critiques
+      ],
+      pouvoir: "Deconstruction" // +20% dmg après 50 énergie utilisée
+    },
+    6: {
+      achat: [
+        { name: "Vanadium Injection", cout: 10000, cat: "Survie" } // gros bonus globaux si 100% ultime
+      ],
+      pouvoir: null
+    },
+    7: {
+      achat: [
+        { name: "Extendrils", cout: 11000, cat: "Spécifique" } // +15% capacité, + portée orbes
+      ],
+      pouvoir: "Destruction’s Divide" // Coalescence 100% dégâts, +25% puissance
+    }
+  }
+ heal_noult: {
+    1: {
+      achat: [
+        { name: "Power Playbook", cout: 1000, cat: "Capacité" },
+        { name: "Shady Spectacles", cout: 1000, cat: "Capacité" },
+        { name: "Electrolytes", cout: 1000, cat: "Survie" }
+      ],
+      pouvoir: "Precarious Potency" // HoT supplémentaire après Biotic Grasp
+    },
+    2: {
+      achat: [
+        { name: "Smart Orbs", cout: 4000, cat: "Spécifique" },
+        { name: "Energized Bracers", cout: 4000, cat: "Capacité" }
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Vanadium Injection", cout: 10000, cat: "Survie" }
+      ],
+      pouvoir: "Optimal Overflow" // orbe soignant lancé plus rapidement et + souvent
+    },
+    4: {
+      achat: [
+        { name: "Biotech Maximizer", cout: 10000, cat: "Capacité" }
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "Extendrils", cout: 11000, cat: "Spécifique" }
+      ],
+      pouvoir: "Phantasm" // copie d’orbe heal stationnaire à chaque Fade
+    },
+    6: {
+      achat: [
+        { name: "Iridescent Iris", cout: 11000, cat: "Capacité" },
+        { name: "Chain Evoker", cout: 10000, cat: "Spécifique" }
+      ],
+      pouvoir: null
+    },
+    7: {
+      achat: [
+        { name: "Champion’s Kit", cout: 13500, cat: "Capacité" }
+      ],
+      pouvoir: "Voidhoppers" // bonus défensif de fade aux alliés proches
+    }
+  }
+damage_noult: {
+    1: {
+      achat: [
+        { name: "High Capacity Tubing", cout: 4000, cat: "Spécifique" },
+        { name: "Bio-Needles", cout: 4000, cat: "Spécifique" }
+      ],
+      pouvoir: "Ethereal Excision"
+    },
+    2: {
+      achat: [
+        { name: "Aftermarket Firing Pin", cout: 3750, cat: "Arme" },
+        { name: "Plasma Converter", cout: 1000, cat: "Arme" },
+        { name: "Power Playbook", cout: 1000, cat: "Capacité" }
+      ],
+      pouvoir: null
+    },
+    3: {
+      achat: [
+        { name: "Vanadium Injection", cout: 10000, cat: "Survie" }
+      ],
+      pouvoir: "Deconstruction"
+    },
+    4: {
+      achat: [
+        { name: "Subatomic Splitter", cout: 11000, cat: "Spécifique" }
+      ],
+      pouvoir: null
+    },
+    5: {
+      achat: [
+        { name: "Cybervenom", cout: 10500, cat: "Capacité" }
+      ],
+      pouvoir: "Multiball"
+    },
+    6: {
+      achat: [
+        { name: "Hardlight Accelerator", cout: 11000, cat: "Arme" },
+        { name: "Technoleech", cout: 4500, cat: "Arme" }
+      ],
+      pouvoir: null
+    },
+    7: {
+      achat: [
+        { name: "The Closer", cout: 13000, cat: "Arme" }
+      ],
+      pouvoir: "Scientific Deathod"
+    }
+  }
 
       // ➕ Ajouter ici les stratégies des autres héros :
       // Moira: { heal: {...}, damage: {...}, ... },

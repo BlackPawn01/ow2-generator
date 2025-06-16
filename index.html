@@ -193,8 +193,7 @@
       ],
       pouvoir: "Crepuscular Circle" // pendant Valkyrie : soin + boost auto en zone
     }
-  }
-,
+  },
          heal_noult: {
     1: {
       achat: [
@@ -242,7 +241,8 @@
     { name: "Champion’s Kit", cout: 13500, cat: "Capacité" }
   ],
   pouvoir: "Serenity"  // Passif utile en soin indirect sans dépendance à l'ultime
-},
+}
+    },
 damage_noult: {
   1: {
     achat: [
@@ -288,8 +288,11 @@ damage_noult: {
     pouvoir: "Serenity"
   }
       }
+},
+      // ➕ Ajouter ici les stratégies des autres héros :
+      // Moira: { heal: {...}, damage: {...}, ... },
+      // Ana: { heal: {...}, ... }
     };
-    // ... stratégies précédemment définies ...
 
     function isValidCost(cout) {
       return (cout <= 1500 || (cout >= 3750 && cout <= 6000) || cout >= 9000);
